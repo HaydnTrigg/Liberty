@@ -1,5 +1,7 @@
 #pragma once
 
+#include "typedefs.h"
+
 DACOM_DEC extern "C" __declspec(noreturn) void explode();
 
 // These macros are here so that macro definitions are refer to the severity levels by name, while

@@ -14,6 +14,7 @@
 #include "DX8/DX8IndexBuffer.h"
 #include "DX8/DX8VertexBuffer.h"
 #include "DX8/DX8Texture.h"
+#include "RPUL_Misc.h"
 
 #include <Tfuncs.h>
 #include <Matrix4.h>
@@ -32,6 +33,7 @@
 #include <map>
 #include <unordered_map>
 #include <list>
+
 struct IVBM_VERTEXBUFFER
 {
 	IRP_VERTEXBUFFERHANDLE handle;
@@ -133,9 +135,9 @@ _extern PFenum d3d_to_pf(D3DFORMAT d3d_format)
 }
 
 #define pf_to_pixel_format_table data_6D70000
-_extern PixelFormat pf_to_pixel_format_table[];
+_extern PixelFormat_OLD pf_to_pixel_format_table[];
 #define pf_to_pixel_format sub_6D5CC70
-_extern PixelFormat* __cdecl pf_to_pixel_format(PFenum pixel_format)
+_extern PixelFormat_OLD* __cdecl pf_to_pixel_format(PFenum pixel_format)
 {
 	if (pixel_format <= 14)
 		return &pf_to_pixel_format_table[pixel_format];
@@ -211,8 +213,6 @@ _extern void __thiscall sub_6D038BA(NewRenderPipeline* _this);
 _extern void __thiscall sub_6D03C94(NewRenderPipeline* _this);
 _extern void __thiscall sub_6D047DF(NewRenderPipeline* _this);
 _extern void __thiscall sub_6D2CE6A(void* _this);
-
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_set_texture_level_data, _sub_6D0EA78, IRenderPipeline8B* _this, IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette);
 
 #define CLSID_NewRenderPipeline "NewRenderPipeline"
 
@@ -2341,8 +2341,8 @@ public:
 
 	DACOM_DEFMETHOD(Initialize) (void) override;
 
-	private:
-		GENRESULT get_light_index(IRP_LIGHTHANDLE handle, U32* out_index) const;
+private:
+	GENRESULT get_light_index(IRP_LIGHTHANDLE handle, U32* out_index) const;
 };
 
 GENRESULT NewRenderPipeline::get_light_index(IRP_LIGHTHANDLE handle, U32* out_index) const
@@ -2688,7 +2688,7 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 	D3DCAPS8 direct3d_caps;
 	D3DDISPLAYMODE adapter_display_mode;
 	D3DPRESENT_PARAMETERS present_parameters;
-	PixelFormat* v65;
+	PixelFormat_OLD* v65;
 	PFenum v77;
 	D3DFORMAT v32, Format, d3d, render_target_format, v84;
 	_D3DSWAPEFFECT swapEffect;
@@ -3507,97 +3507,25 @@ GENRESULT NewRenderPipeline::is_texture(IRP_TEXTUREHANDLE htexture)
 	}
 	return gr;
 }
-
-static GENRESULT get_texture_surface(IRP_TEXTUREHANDLE htexture, U32 subsurface, IDirect3DSurface8** out_direct3d_texture_surface)
-{
-	GENRESULT gr = GR_GENERIC;
-	HRESULT hr = E_FAIL;
-
-	IDirect3DSurface8* direct3d_texture_surface = nullptr;
-	DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
-	IDirect3DBaseTexture8* direct3d_basetexture = texture->texture;
-	D3DRESOURCETYPE resource_type = direct3d_basetexture->GetType();
-
-	switch (resource_type)
-	{
-	case D3DRTYPE_TEXTURE:
-	{
-		ASSERT(texture->unknown4 == 0);
-
-		IDirect3DTexture8* direct3d_2d_texture;
-		if (SUCCEEDED(hr = direct3d_basetexture->QueryInterface(
-			IID_IDirect3DTexture8,
-			reinterpret_cast<void**>(&direct3d_2d_texture))))
-		{
-			if (FAILED(hr = direct3d_2d_texture->GetSurfaceLevel(subsurface, &direct3d_texture_surface)))
-			{
-				GENERAL_ERROR(TEMPSTR("%s GetSurfaceLevel failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
-				gr = GR_GENERIC;
-			}
-			else
-			{
-				gr = GR_OK;
-			}
-			direct3d_2d_texture->Release();
-		}
-		else
-		{
-			GENERAL_ERROR(TEMPSTR("%s QueryInterface for IDirect3DTexture8 failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
-			gr = GR_GENERIC;
-		}
-	}
-	break;
-	case D3DRTYPE_CUBETEXTURE:
-	{
-		ASSERT(texture->unknown4 == 1);
-
-		IDirect3DCubeTexture8* direct3d_cube_texture;
-		if (SUCCEEDED(hr = direct3d_basetexture->QueryInterface(
-			IID_IDirect3DCubeTexture8,
-			reinterpret_cast<void**>(&direct3d_cube_texture))))
-		{
-			D3DCUBEMAP_FACES face = static_cast<D3DCUBEMAP_FACES>(subsurface);
-			if (FAILED(hr = direct3d_cube_texture->GetCubeMapSurface(face, 0, &direct3d_texture_surface)))
-			{
-				GENERAL_ERROR(TEMPSTR("%s GetCubeMapSurface failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
-				gr = GR_GENERIC;
-			}
-			else
-			{
-				gr = GR_OK;
-			}
-			direct3d_cube_texture->Release();
-		}
-		else
-		{
-			GENERAL_ERROR(TEMPSTR("%s QueryInterface for IDirect3DCubeTexture8 failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
-			gr = GR_GENERIC;
-		}
-	}
-	break;
-	default:
-	{
-		GENERAL_FATAL(TEMPSTR("%s unsupported resource type %u", __FUNCTION__, static_cast<U32>(resource_type)));
-		gr = GR_NOT_IMPLEMENTED;
-	}
-	break;
-	}
-
-	if (SUCCEEDED(gr))
-	{
-		*out_direct3d_texture_surface = direct3d_texture_surface;
-	}
-	else
-	{
-		GENERAL_ERROR(TEMPSTR("%s failed to get surface", __FUNCTION__));
-		if (direct3d_texture_surface != nullptr)
-		{
-			direct3d_texture_surface->Release();
-		}
-	}
-
-	return gr;
-}
+//
+//static GENRESULT get_texture_surface(IRP_TEXTUREHANDLE htexture, U32 subsurface, IDirect3DSurface8** out_direct3d_texture_surface)
+//{
+//	GENRESULT gr;
+//	HRESULT hr;
+//	DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
+//
+//	if(FAILED(hr = texture->get_subsurface(subsurface, out_direct3d_texture_surface)))
+//	{
+//		GENERAL_ERROR(TEMPSTR("%s failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+//		gr = GR_GENERIC;
+//	}
+//	else
+//	{
+//		gr = GR_OK;
+//	}
+//
+//	return gr;
+//}
 
 GENRESULT NewRenderPipeline::lock_texture(IRP_TEXTUREHANDLE htexture, U32 subsurface, RPLOCKDATA* lockData)
 {
@@ -3610,8 +3538,14 @@ GENRESULT NewRenderPipeline::lock_texture(IRP_TEXTUREHANDLE htexture, U32 subsur
 	}
 	else
 	{
+		DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
 		IDirect3DSurface8* direct3d_texture_surface;
-		if (SUCCEEDED(gr = get_texture_surface(htexture, subsurface, &direct3d_texture_surface)))
+		if (FAILED(hr = texture->get_subsurface(subsurface, &direct3d_texture_surface)))
+		{
+			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+		else
 		{
 			D3DSURFACE_DESC desc;
 			if (SUCCEEDED(hr = direct3d_texture_surface->GetDesc(&desc)))
@@ -3661,8 +3595,14 @@ GENRESULT NewRenderPipeline::unlock_texture(IRP_TEXTUREHANDLE htexture, U32 subs
 	}
 	else
 	{
+		DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
 		IDirect3DSurface8* direct3d_texture_surface;
-		if (SUCCEEDED(gr = get_texture_surface(htexture, subsurface, &direct3d_texture_surface)))
+		if (FAILED(hr = texture->get_subsurface(subsurface, &direct3d_texture_surface)))
+		{
+			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+		else
 		{
 			if (FAILED(hr = direct3d_texture_surface->UnlockRect()))
 			{
@@ -3686,8 +3626,14 @@ GENRESULT NewRenderPipeline::get_texture_format(IRP_TEXTUREHANDLE htexture, PFen
 	}
 	else
 	{
+		DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
 		IDirect3DSurface8* direct3d_texture_surface;
-		if (SUCCEEDED(gr = get_texture_surface(htexture, 0, &direct3d_texture_surface)))
+		if (FAILED(hr = texture->get_subsurface(0, &direct3d_texture_surface)))
+		{
+			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+		else
 		{
 			ASSERT(direct3d_texture_surface != nullptr);
 
@@ -3805,21 +3751,100 @@ GENRESULT NewRenderPipeline::get_texture_interface(IRP_TEXTUREHANDLE htexture, c
 	return GR_NOT_IMPLEMENTED;
 }
 
-GENRESULT NewRenderPipeline::set_texture_level_data(IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette)
+GENRESULT NewRenderPipeline::set_texture_level_data(
+	IRP_TEXTUREHANDLE htexture,
+	U32 subsurface,
+	int src_width,
+	int src_height,
+	int src_stride,
+	const PFenum* src_format,
+	const void* src_pixel,
+	const void* src_alpha,
+	const RGB* src_palette)
 {
+	// #TODO: Cleanup
+
 	CHECK_DEVICE_LIFETIME();
 
-	GENRESULT gr = GR_OK;
-	if (SUCCEEDED(is_texture(htexture)))
+	for (U32 stage_index = 0; stage_index < _countof(curr_hw_texture); stage_index++)
 	{
-		gr = DirectX8_set_texture_level_data(this, htexture, subsurface, src_width, src_height, src_stride, src_format, src_pixel, src_alpha, src_palette);
+		CACHED_TEXTURE& cached_texture = curr_hw_texture[stage_index];
+		if (cached_texture.value == htexture)
+		{
+			cached_texture.set(direct3d_device, stage_index, NULL);
+		}
+	}
 
+	GENRESULT gr;
+	HRESULT hr;
+
+	IDirect3DSurface8* direct3d_texture_surface;
+	DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
+	if (FAILED(hr = texture->get_subsurface(subsurface, &direct3d_texture_surface)))
+	{
+		GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+		gr = GR_GENERIC;
 	}
 	else
 	{
-		gr = GR_INVALID_PARMS;
-	}
+		D3DFORMAT d3d_src_format = pf_to_d3d(*src_format);
+		unused(d3d_src_format);
 
+		D3DSURFACE_DESC desc;
+		direct3d_texture_surface->GetDesc(&desc);
+
+		// lock the rect so we can write into it
+		D3DLOCKED_RECT rect;
+		hr = direct3d_texture_surface->LockRect(&rect, nullptr, D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
+		if (FAILED(hr))
+		{
+			GENERAL_ERROR(TEMPSTR("LockRect failed : %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+		else
+		{
+			PFenum dst_pf = d3d_to_pf(desc.Format);
+			PixelFormat dest_pixel_format(dst_pf);
+			PixelFormat source_pixel_format(*src_format);
+
+			if (dest_pixel_format.is_fourcc())
+			{
+				ASSERT(dst_pf == *src_format);
+				ASSERT(src_width == desc.Width);
+				ASSERT(src_height == desc.Height);
+
+				memcpy(rect.pBits, src_pixel, desc.Size);
+
+				debug_point;
+			}
+			else
+			{
+				U8* dst_bits = static_cast<byte*>(rect.pBits);
+				U32 dst_stride = rect.Pitch;
+				U32 dst_width = desc.Width;
+				U32 dst_height = desc.Height;
+				memset(dst_bits, 0, desc.Size);
+				mem_bitblt(
+					dst_bits,
+					dst_width,
+					dst_height,
+					dst_stride,
+					dest_pixel_format,
+					src_pixel,
+					src_width,
+					src_height,
+					src_stride,
+					source_pixel_format,
+					src_palette,
+					(const U8*)src_alpha);
+			}
+
+			direct3d_texture_surface->UnlockRect();
+			gr = GR_OK;
+		}
+
+		direct3d_texture_surface->Release();
+	}
 	return gr;
 }
 
@@ -3979,7 +4004,8 @@ GENRESULT NewRenderPipeline::set_texture_stage_texture(U32 stage, IRP_TEXTUREHAN
 {
 	CHECK_DEVICE_LIFETIME();
 
-	GENRESULT gr = curr_hw_texture->set(direct3d_device, stage, htexture);
+	ASSERT(stage < _countof(curr_hw_texture));
+	GENRESULT gr = curr_hw_texture[stage].set(direct3d_device, stage, htexture);
 	return gr;
 }
 
@@ -3987,7 +4013,8 @@ GENRESULT NewRenderPipeline::get_texture_stage_texture(U32 stage, IRP_TEXTUREHAN
 {
 	CHECK_DEVICE_LIFETIME();
 
-	GENRESULT gr = curr_hw_texture->get(direct3d_device, stage, out_htexture);
+	ASSERT(stage < _countof(curr_hw_texture));
+	GENRESULT gr = curr_hw_texture[stage].get(direct3d_device, stage, out_htexture);
 	return gr;
 }
 
@@ -5086,8 +5113,8 @@ GENRESULT NewRenderPipeline::copy_vertices(IRP_VERTEXBUFFERHANDLE vb_handle, U32
 			Because that code never passed a valid handle in, it never calls any function to
 			destroy a created buffer. So there is no choice but to maintain a single, special,
 			vertex buffer just for this function, just because the API is being missused.
-			This code doesn't existin the Beta, it doesn't exist in Conqeust, someone at 
-			Digital Anvil decided they'd just throw all the fucks out of the window, just to 
+			This code doesn't existin the Beta, it doesn't exist in Conqeust, someone at
+			Digital Anvil decided they'd just throw all the fucks out of the window, just to
 			piss of some future engineer who had to deal with their shitty code. */
 
 			// handles dispose or format change etc.

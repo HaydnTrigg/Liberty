@@ -11,32 +11,22 @@
 //--------------------------IRenderPipeline8B Interface---------------------//
 //--------------------------------------------------------------------------//
 
-struct RGB;
+struct RGB
+{
+	U8 r, g, b;
+};
+
 class Matrix4;
 class Transform;
 
 #include "RPVertexBuffer.h"
 #include "RPIndexBuffer.h"
 #include "RPTexture.h"
+#include "Pixel.h"
 
 typedef struct IRenderPipeline8B* LPRENDERPIPELINE;
 
-enum PFenum
-{
-	PF_UNKNOWN = 0,
-	// #TODO: Standard formats
-	PF_MAX_VALUE = 0x16,
-
-	PF_4CC_DAOP = MAKEFOURCC('D', 'A', 'O', 'P'),
-	PF_4CC_DAOT = MAKEFOURCC('D', 'A', 'O', 'T'),
-	PF_4CC_DAAA = MAKEFOURCC('D', 'A', 'A', 'A'),
-	PF_4CC_DAAL = MAKEFOURCC('D', 'A', 'A', 'L'),
-	PF_4CC_DAA1 = MAKEFOURCC('D', 'A', 'A', '1'),
-	PF_4CC_DAA4 = MAKEFOURCC('D', 'A', 'A', '4'),
-	PF_4CC_DAA8 = MAKEFOURCC('D', 'A', 'A', '8'),
-};
-
-struct PixelFormat
+struct PixelFormat_OLD
 {
 	PFenum pf;
 	D3DFORMAT d3d;
@@ -595,7 +585,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// method will fail.
 	//
 	// desiredformat - The desired format of the new texture. This can either be
-	// a fully-specified PixelFormat or a PixelFormat that specifies
+	// a fully-specified PixelFormat_OLD or a PixelFormat_OLD that specifies
 	// a texture format class. If no suitable format is available
 	// (i.e. the fully-specified format is not available nor are any
 	// of the formats in the texture format class), this method will 

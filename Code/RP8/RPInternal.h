@@ -8,6 +8,6 @@
 
 #include <d3d8.h>
 
-#define HRESULT_GET_ERROR_STRING(...) (explode(), (const char*)0)
+#define HRESULT_GET_ERROR_STRING(...) "<HRESULT TODO>"
 
 #endif

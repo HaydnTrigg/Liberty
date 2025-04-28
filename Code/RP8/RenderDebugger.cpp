@@ -332,7 +332,7 @@ void rp_rd_save_surface_bmp( const char *filename, LPDIRECTDRAWSURFACE7 surface 
 
 		size = ddsd.dwWidth * ddsd.dwHeight * 4;
 
-		PixelFormat pf( ddsd.ddpfPixelFormat );
+		PixelFormat_OLD pf( ddsd.ddpfPixelFormat_OLD );
 
 		if( (rgb_data = (unsigned char*)malloc( size )) != NULL ) {
 
