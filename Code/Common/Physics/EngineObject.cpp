@@ -26,8 +26,6 @@ EngineObject::EngineObject() :
     instanceFlags()
 {
     mangled_assert("??0EngineObject@@QAE@XZ");
-
-    transform.set_identity();
 }
 
 COMMON_DEC EngineObject& EngineObject::operator=(EngineObject const& copy)
