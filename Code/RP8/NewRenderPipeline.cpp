@@ -30,6 +30,7 @@
 
 #include <FLHook_st6.h>
 #include <map>
+#include <unordered_map>
 #include <list>
 struct IVBM_VERTEXBUFFER
 {
@@ -39,6 +40,7 @@ struct IVBM_VERTEXBUFFER
 };
 typedef std::map<IRP_VERTEXBUFFERHANDLE, IVBM_VERTEXBUFFER>	vertex_buffer_map;
 typedef std::list<IVBM_VERTEXBUFFER*> vertex_buffer_list;
+typedef std::unordered_map<IRP_LIGHTHANDLE, D3DLIGHT8> light_map;
 
 static void Transform2D3D(D3DMATRIX& dst, const Transform& src);
 static void D3D2Transform(const D3DMATRIX& src, Transform& dest);
@@ -210,14 +212,7 @@ _extern void __thiscall sub_6D03C94(NewRenderPipeline* _this);
 _extern void __thiscall sub_6D047DF(NewRenderPipeline* _this);
 _extern void __thiscall sub_6D2CE6A(void* _this);
 
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_destroy_light, _sub_6D0CF9C, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_get_light, _sub_6D0D044, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_set_light_enable, _sub_6D0D0D7, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle, U32 enable);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_get_light_enable, _sub_6D0D157, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle, U32* out_enable);
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_set_texture_level_data, _sub_6D0EA78, IRenderPipeline8B* _this, IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_add_light, _sub_6D0CCB2, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_remove_light, _sub_6D0CD32, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_update_light, _sub_6D0CDDB, IRenderPipeline8B* _this, IRP_LIGHTHANDLE handle);
 
 #define CLSID_NewRenderPipeline "NewRenderPipeline"
 
@@ -2178,6 +2173,7 @@ public:
 	DX8VertexBuffer copy_vertices_buffer;
 	vertex_buffer_map managed_vbs;
 	vertex_buffer_list available_vbs;
+	light_map tracked_lights;
 
 	BEGIN_DACOM_MAP_INBOUND(NewRenderPipeline)
 		DACOM_INTERFACE_ENTRY(IRenderPipeline8B)
@@ -2344,9 +2340,25 @@ public:
 	// IAggregateComponent methods
 
 	DACOM_DEFMETHOD(Initialize) (void) override;
+
+	private:
+		GENRESULT get_light_index(IRP_LIGHTHANDLE handle, U32* out_index) const;
 };
 
-
+GENRESULT NewRenderPipeline::get_light_index(IRP_LIGHTHANDLE handle, U32* out_index) const
+{
+	U32 light_index = 0;
+	for (light_map::value_type const& value : tracked_lights)
+	{
+		if (value.first == handle)
+		{
+			*out_index = light_index;
+			return GR_OK;
+		}
+		light_index++;
+	}
+	return GR_GENERIC;
+}
 
 // 6D01143
 NewRenderPipeline::NewRenderPipeline() :
@@ -3281,26 +3293,27 @@ GENRESULT NewRenderPipeline::set_perspective(float fovy, float aspect, float zne
 	return GR_OK;
 }
 
-_extern U32 __thiscall sub_6D2C487(void* _this, IRP_LIGHTHANDLE, int a3);
 GENRESULT NewRenderPipeline::set_light(IRP_LIGHTHANDLE handle, const D3DLIGHT8* light_values)
 {
 	// #TODO Remove me. But before you do... level with me... how much was the API designer smoking?
 	ASSERT(handle == light_values);
 
 	CHECK_DEVICE_LIFETIME();
-
 	ASSERT(direct3d_device);	// assert after the create_buffers check
 
-	U32 light_index = sub_6D2C487(&this->unknown21F4, handle, 0);
-	if (FAILED(direct3d_device->SetLight(light_index, light_values)))
-	{
-		return GR_GENERIC;
-	}
+	// add light implicitely
+	tracked_lights[handle] = *light_values;
 
-	//if (!disable_hw_caches) 
-	//{
-	//	lights[handle] = handle;
-	//}
+	GENRESULT gr;
+	U32 light_index;
+	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	{
+		if (FAILED(direct3d_device->SetLight(light_index, light_values)))
+		{
+			GENERAL_ERROR(TEMPSTR("SetLight: %s", HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+	}
 
 	rp_rd_light(handle, light_values);
 
@@ -3309,34 +3322,65 @@ GENRESULT NewRenderPipeline::set_light(IRP_LIGHTHANDLE handle, const D3DLIGHT8* 
 
 GENRESULT NewRenderPipeline::destroy_light(IRP_LIGHTHANDLE handle)
 {
-	GENRESULT gr = DirectX8_destroy_light(this, handle);
-
+	GENRESULT gr;
+	U32 light_index;
+	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	{
+		tracked_lights.erase(handle);
+	}
 	return gr;
-
-	//CHECK_DEVICE_LIFETIME();
-	//sub_6D2CB6F(&this->unknown21F4, handle, 0);
-	//sub_6D2D032((int*)&this->unknown21F4, this->direct3d_device);
-	//sub_6D2C7CF(&this->unknown21F4, handle);
-	//return GR_OK;
 }
 
 GENRESULT NewRenderPipeline::get_light(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values)
 {
-	NOT_IMPLEMENTED;
-	GENRESULT gr = DirectX8_get_light(this, handle, out_light_values);
+	GENRESULT gr;
+	U32 light_index;
+	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	{
+		HRESULT hr;
+		if (FAILED(hr = direct3d_device->GetLight(light_index, out_light_values)))
+		{
+			GENERAL_ERROR(TEMPSTR("GetLight: %s", HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+	}
 	return gr;
 }
 
 GENRESULT NewRenderPipeline::set_light_enable(IRP_LIGHTHANDLE handle, U32 enable)
 {
-	GENRESULT gr = DirectX8_set_light_enable(this, handle, enable);
+	GENRESULT gr;
+	U32 light_index;
+	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	{
+		HRESULT hr;
+		if (FAILED(hr = direct3d_device->LightEnable(light_index, enable)))
+		{
+			GENERAL_ERROR(TEMPSTR("LightEnable: %s", HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+	}
 	return gr;
 }
 
 GENRESULT NewRenderPipeline::get_light_enable(IRP_LIGHTHANDLE handle, U32* out_enable)
 {
-	NOT_IMPLEMENTED;
-	GENRESULT gr = DirectX8_get_light_enable(this, handle, out_enable);
+	GENRESULT gr;
+	U32 light_index;
+	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	{
+		HRESULT hr;
+		BOOL enable;
+		if (FAILED(hr = direct3d_device->GetLightEnable(light_index, &enable)))
+		{
+			GENERAL_ERROR(TEMPSTR("GetLightEnable: %s", HRESULT_GET_ERROR_STRING(hr)));
+			gr = GR_GENERIC;
+		}
+		else
+		{
+			*out_enable = enable;
+		}
+	}
 	return gr;
 }
 
@@ -4398,22 +4442,26 @@ GENRESULT NewRenderPipeline::draw_indexed_primitive_vb(D3DPRIMITIVETYPE type, IR
 
 GENRESULT NewRenderPipeline::add_light(IRP_LIGHTHANDLE handle)
 {
-	//	NOT_IMPLEMENTED;
-	GENRESULT gr = DirectX8_add_light(this, handle);
-	return gr;
+	CHECK_DEVICE_LIFETIME();
+	// #NOTE: Used for world space lights, untouched as long as viewspace lights are enabled
+	NOT_IMPLEMENTED;
+	return GR_NOT_IMPLEMENTED;
 }
 
 GENRESULT NewRenderPipeline::remove_light(IRP_LIGHTHANDLE handle)
 {
-	GENRESULT gr = DirectX8_remove_light(this, handle);
-	return gr;
+	CHECK_DEVICE_LIFETIME();
+	// #NOTE: Used for world space lights, untouched as long as viewspace lights are enabled
+	NOT_IMPLEMENTED;
+	return GR_NOT_IMPLEMENTED;
 }
 
 GENRESULT NewRenderPipeline::update_light(IRP_LIGHTHANDLE handle)
 {
-	//NOT_IMPLEMENTED;
-	GENRESULT gr = DirectX8_update_light(this, handle);
-	return gr;
+	CHECK_DEVICE_LIFETIME();
+	// #NOTE: Used for world space lights, untouched as long as viewspace lights are enabled
+	NOT_IMPLEMENTED;
+	return GR_NOT_IMPLEMENTED;
 }
 
 GENRESULT NewRenderPipeline::set_world_n(UNKNOWN a2, Transform* transform)
