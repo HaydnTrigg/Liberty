@@ -25,7 +25,7 @@ HRESULT mem_bitblt(	void *dst_bits,
 						int src_stride,
 						const PixelFormat & src_format_in,
 						const RGB *src_palette,
-						const U8 *src_alpha )
+						const void*src_alpha )
 {
 	U32			 dst_bd = ((dst_format.ddpf.dwRGBBitCount+7)>>3);	// dst byte depth
 	U8			*dst_bits_u8 = (U8*)dst_bits;
@@ -62,7 +62,7 @@ HRESULT mem_bitblt(	void *dst_bits,
 	// Set up source alpha map
 	//
 	if( src_alpha ) {
-		src_alpha_map = src_alpha;
+		src_alpha_map = (const U8*)src_alpha;
 		src_alpha_stride = src_width;
 	}
 	else {
@@ -251,7 +251,7 @@ HRESULT mem_bitblt_invert(	void *dst_bits,
 						int src_stride,
 						const PixelFormat & src_format_in,
 						const RGB *src_palette,
-						const U8 *src_alpha )
+						const void *src_alpha )
 {
 	U32			 dst_bd = ((dst_format.ddpf.dwRGBBitCount+7)>>3);	// dst byte depth
 	U8			*dst_bits_u8 = (U8*)dst_bits;
@@ -288,7 +288,7 @@ HRESULT mem_bitblt_invert(	void *dst_bits,
 	// Set up source alpha map
 	//
 	if( src_alpha ) {
-		src_alpha_map = src_alpha + (src_stride * (src_height-1));	//adjust to last line
+		src_alpha_map = (const U8*)src_alpha + (src_stride * (src_height-1));	//adjust to last line
 		src_alpha_stride = src_width;
 	}
 	else {

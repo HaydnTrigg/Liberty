@@ -2,7 +2,6 @@
 
 #include "CachedGeometry.h"
 #include "RenderDebugger.h"
-#include "RPInternal.h"
 
 #include "DX8/DX8IndexBuffer.h"
 
@@ -51,7 +50,7 @@ GENRESULT CACHED_GEOMETRY::flush_indices(IDirect3DDevice8* direct3d_device)
 		}
 		if (FAILED(hr))
 		{
-			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 	}

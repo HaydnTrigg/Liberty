@@ -121,7 +121,7 @@ struct RPBUFFERSINFO
 	U32 refresh_rate;
 	U32 width;
 	U32 height;
-	D3DFORMAT format;
+	U32 format;
 	DWORD unknown14_auto_depth_stencil_format1;
 	DWORD unknown18_auto_depth_stencil_format2;
 	DWORD unknown1C;
@@ -297,7 +297,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// If this method returns failure, then there are no render buffers 
 	// available (even if a previous call to create_buffers() succeeded).
 	//
-	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* buffersinfo, RPBUFFERSINFO* out_buffersinfo) = 0;
+	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) = 0;
 
 	DACOM_DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) = 0;
 

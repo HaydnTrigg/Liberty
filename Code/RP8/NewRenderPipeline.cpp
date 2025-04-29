@@ -5,7 +5,6 @@
 #include "RPVertexBuffer.h"
 #include "GammaControl.h"
 #include "RPTexture.h"
-#include "RPInternal.h"
 #include "CachedMatrix.h"
 #include "CachedViewport.h"
 #include "CachedTexture.h"
@@ -70,69 +69,9 @@ if (direct3d_device == NULL) \
 	return GR_GENERIC; \
 }
 
-#define pf_to_d3d_table data_6D6FFA8
-_extern D3DFORMAT pf_to_d3d_table[] =
-{
-	D3DFMT_UNKNOWN,
-	D3DFMT_P8,
-	D3DFMT_R8G8B8,
-	D3DFMT_R5G6B5,
-	D3DFMT_X1R5G5B5,
-	D3DFMT_A4R4G4B4,
-	D3DFMT_A1R5G5B5,
-	D3DFMT_A8R8G8B8,
-	D3DFMT_X8R8G8B8,
-	D3DFMT_UNKNOWN,
-	D3DFMT_DXT1,
-	D3DFMT_DXT2,
-	D3DFMT_DXT3,
-	D3DFMT_DXT4,
-	D3DFMT_DXT5,
-	D3DFORMAT('POAD'),
-	D3DFORMAT('TOAD'),
-	D3DFORMAT('AAAD'),
-	D3DFORMAT('LAAD'),
-	D3DFORMAT('1AAD'),
-	D3DFORMAT('4AAD'),
-	D3DFORMAT('8AAD'),
-};
-static_assert(_countof(pf_to_d3d_table) == 22);
 
-#define get_pf_to_d3d_table sub_6D5CC20
-_extern D3DFORMAT* get_pf_to_d3d_table()
-{
-	return pf_to_d3d_table;
-}
 
-#define pf_to_d3d sub_6D5CBB0
-_extern D3DFORMAT pf_to_d3d(PFenum pfenum)
-{
-	D3DFORMAT* pf_to_d3d_table = get_pf_to_d3d_table();
 
-	if (pfenum >= PF_MAX_VALUE)
-	{
-		GENERAL_ERROR(TEMPSTR("pf_to_d3d: unknown pfenum passed (%x)", static_cast<U32>(pfenum)));
-		return D3DFMT_UNKNOWN;
-	}
-
-	D3DFORMAT format = pf_to_d3d_table[pfenum];
-	return format;
-}
-
-#define d3d_to_pf sub_6D5CC30
-_extern PFenum d3d_to_pf(D3DFORMAT d3d_format)
-{
-	D3DFORMAT* pf_to_d3d_table = get_pf_to_d3d_table();
-	for (U32 index = 0; index < PF_MAX_VALUE; index++)
-	{
-		if (pf_to_d3d_table[index] == d3d_format)
-		{
-			PFenum gr = static_cast<PFenum>(index);
-			return gr;
-		}
-	}
-	return PF_UNKNOWN;
-}
 
 #define pf_to_pixel_format_table data_6D70000
 _extern PixelFormat_OLD pf_to_pixel_format_table[];
@@ -142,7 +81,7 @@ _extern PixelFormat_OLD* __cdecl pf_to_pixel_format(PFenum pixel_format)
 	if (pixel_format <= 14)
 		return &pf_to_pixel_format_table[pixel_format];
 	else
-		return pf_to_pixel_format_table;
+		return &pf_to_pixel_format_table[PF_UNKNOWN];
 }
 
 #define validate_depth_stencil_format sub_6D159A6
@@ -2217,7 +2156,7 @@ public:
 	DACOM_DEFMETHOD(get_num_display_modes)(U32* count) override;
 	DACOM_DEFMETHOD(get_display_mode)(RPDISPLAYMODEINFO* mode, U32 mode_num) override;
 	DACOM_DEFMETHOD(select_mode)(RPBUFFERSINFO* mode, U32* adapter) override;
-	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* buffersinfo, RPBUFFERSINFO* out_buffersinfo) override;
+	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) override;
 	DACOM_DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) override;
 	DACOM_DEFMETHOD(destroy_buffers)(void) override;
 	DACOM_DEFMETHOD(clear_buffers)(U32 rp_clear_flags, RECT* viewport_sub_rect) override;
@@ -2677,10 +2616,8 @@ GENRESULT NewRenderPipeline::select_mode(RPBUFFERSINFO* mode, U32* adapter)
 	return gr;
 }
 
-GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinfo, RPBUFFERSINFO* out_buffersinfo)
+GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo)
 {
-	debug_point;
-
 	// Local variables
 
 	U32 i, adapter;
@@ -2714,34 +2651,34 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 	hr = this->direct3d->GetAdapterDisplayMode(this->direct3d_adapter, &adapter_display_mode);
 	if (FAILED(hr))
 	{
-		GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_TO_STRING(hr)));
 		return (GENRESULT)hr;
 	}
 
-	if (buffersinfo->unknown25_fullscreen) {
-		adapter = buffersinfo->adapter;
+	if (requested->unknown25_fullscreen) {
+		adapter = requested->adapter;
 		if (!(adapter & 0x80000000)) {
 			v67 = this->direct3d->EnumAdapterModes(this->direct3d_adapter, adapter, &adapter_display_mode);
 			if (FAILED(v67)) {
-				GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_GET_ERROR_STRING(v67)));
+				GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_TO_STRING(v67)));
 				return (GENRESULT)v67;
 			}
 		}
 		else {
-			memcpy(&selected_mode, buffersinfo, sizeof(selected_mode));
-			if (buffersinfo->format == D3DFORMAT(D3DFMT_FORCE_DWORD | 0x80000000)) // #TODO what is this?
+			memcpy(&selected_mode, requested, sizeof(selected_mode));
+			if (requested->format == D3DFORMAT(D3DFMT_FORCE_DWORD | 0x80000000)) // #TODO what is this?
 			{
 				d3d = adapter_display_mode.Format;
 				selected_mode.format = pf_to_pixel_format(d3d_to_pf(d3d))->d3d;
 			}
 			v71 = this->select_mode(&selected_mode, &adapter);
 			if (v71 < GR_OK) {
-				GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_GET_ERROR_STRING(v71)));
+				GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_TO_STRING(v71)));
 				return (GENRESULT)v71;
 			}
 			v69 = this->direct3d->EnumAdapterModes(this->direct3d_adapter, adapter, &adapter_display_mode);
 			if (FAILED(v69)) {
-				GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_GET_ERROR_STRING(v69)));
+				GENERAL_ERROR(TEMPSTR("create_buffers_select_mode: %s", HRESULT_TO_STRING(v69)));
 				return (GENRESULT)v69;
 			}
 			render_target_format = adapter_display_mode.Format;
@@ -2752,14 +2689,14 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 	v77 = d3d_to_pf(Format);
 
 	if (render_target_format == D3DFMT_UNKNOWN) {
-		if (buffersinfo->format == D3DFORMAT(D3DFMT_FORCE_DWORD | 0x80000000) // #TODO what is this?
-			|| pf_to_pixel_format(v77)->d3d == buffersinfo->format) {
+		if (requested->format == D3DFORMAT(D3DFMT_FORCE_DWORD | 0x80000000) // #TODO what is this?
+			|| pf_to_pixel_format(v77)->d3d == requested->format) {
 			render_target_format = Format;
 		}
 		else {
 			for (i = 0; i < 9; ++i) {
 				v65 = pf_to_pixel_format((PFenum)i);
-				if (v65->d3d == buffersinfo->format) {
+				if (v65->d3d == requested->format) {
 					v32 = pf_to_d3d(v65->pf);
 					v63 = this->direct3d->CheckDeviceFormat(
 						this->direct3d_adapter,
@@ -2779,28 +2716,28 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 	if (render_target_format == D3DFMT_UNKNOWN)
 		return GR_GENERIC;
 
-	a4 = buffersinfo->unknown14_auto_depth_stencil_format1;
+	a4 = requested->unknown14_auto_depth_stencil_format1;
 	if (a4 == UINT_MAX)
 		a4 = pf_to_pixel_format(d3d_to_pf(render_target_format))->d3d;
-	a5 = buffersinfo->unknown18_auto_depth_stencil_format2;
+	a5 = requested->unknown18_auto_depth_stencil_format2;
 	v84 = sub_6D159FF(this->direct3d, Format, render_target_format, &a4, &a5);
 	if (v84 == D3DFMT_UNKNOWN)
 		return GR_GENERIC;
 
-	v73 = !buffersinfo->unknown25_fullscreen;
+	v73 = !requested->unknown25_fullscreen;
 	v79 = 1;
 	v86 = 0;
 	swapEffect = D3DSWAPEFFECT_COPY;
 
-	if (buffersinfo->unknown25_fullscreen) {
-		if (!buffersinfo->unknown24 || this->pipeline_states[13].value != 0) {
-			swapEffect = buffersinfo->unknown1C ? D3DSWAPEFFECT_COPY_VSYNC : D3DSWAPEFFECT_COPY;
+	if (requested->unknown25_fullscreen) {
+		if (!requested->unknown24 || this->pipeline_states[13].value != 0) {
+			swapEffect = requested->unknown1C ? D3DSWAPEFFECT_COPY_VSYNC : D3DSWAPEFFECT_COPY;
 		}
 		else {
-			v79 = buffersinfo->unknown20_buffer_count_plus_one - 1;
+			v79 = requested->unknown20_buffer_count_plus_one - 1;
 			swapEffect = D3DSWAPEFFECT_FLIP;
 		}
-		switch (buffersinfo->unknown1C) {
+		switch (requested->unknown1C) {
 		case 0: v86 = 0x80000000; break;
 		case 1: v86 = 1; break;
 		case 2: v86 = 2; break;
@@ -2808,12 +2745,12 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 		case 4: v86 = 8; break;
 		}
 	}
-	else if (buffersinfo->unknown24 && this->pipeline_states[13].value == 0) {
-		swapEffect = buffersinfo->unknown1C ? D3DSWAPEFFECT_COPY_VSYNC : D3DSWAPEFFECT_COPY;
+	else if (requested->unknown24 && this->pipeline_states[13].value == 0) {
+		swapEffect = requested->unknown1C ? D3DSWAPEFFECT_COPY_VSYNC : D3DSWAPEFFECT_COPY;
 	}
 
-	present_parameters.BackBufferWidth = buffersinfo->width;
-	present_parameters.BackBufferHeight = buffersinfo->height;
+	present_parameters.BackBufferWidth = requested->width;
+	present_parameters.BackBufferHeight = requested->height;
 	present_parameters.BackBufferFormat = render_target_format;
 	present_parameters.BackBufferCount = v79;
 	present_parameters.MultiSampleType = D3DMULTISAMPLE_NONE;
@@ -2828,10 +2765,10 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 
 	if (this->direct3d_device) {
 		hr = this->direct3d_device->Reset(&present_parameters);
-		if (FAILED(hr)) {
-			GENERAL_ERROR(TEMPSTR("create_device: %s", HRESULT_GET_ERROR_STRING(hr)));
-			return (GENRESULT)hr;
-		}
+		//if (FAILED(hr)) {
+		//	GENERAL_ERROR(TEMPSTR("create_device: %s", HRESULT_TO_STRING(hr)));
+		//	return (GENRESULT)hr;
+		//}
 	}
 	else {
 		hwnd_ancestor = GetAncestor(hwnd, GA_ROOT);
@@ -2849,12 +2786,12 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 				| D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 		} while (true);
 		if (FAILED(hr)) {
-			GENERAL_ERROR(TEMPSTR("create_device: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("create_device: %s", HRESULT_TO_STRING(hr)));
 			return (GENRESULT)hr;
 		}
 		hr = this->direct3d_device->GetDeviceCaps(&direct3d_caps);
 		if (FAILED(hr)) {
-			GENERAL_ERROR(TEMPSTR("create_device_caps: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("create_device_caps: %s", HRESULT_TO_STRING(hr)));
 			return (GENRESULT)hr;
 		}
 		update_device_capabilities(this, &direct3d_caps);
@@ -2869,12 +2806,12 @@ GENRESULT NewRenderPipeline::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinf
 	this->pf_unknown234 = d3d_to_pf(present_parameters.BackBufferFormat);
 	this->hwnd = hwnd;
 	this->buffers_info.adapter = adapter;
-	this->buffers_info.width = buffersinfo->width;
-	this->buffers_info.height = buffersinfo->height;
+	this->buffers_info.width = requested->width;
+	this->buffers_info.height = requested->height;
 	this->buffers_info.format = pf_to_pixel_format(this->pf_unknown234)->d3d;
 	this->buffers_info.unknown14_auto_depth_stencil_format1 = sub_6D15B0D(present_parameters.AutoDepthStencilFormat);
 	this->buffers_info.unknown18_auto_depth_stencil_format2 = sub_6D15B45(present_parameters.AutoDepthStencilFormat);
-	this->buffers_info.unknown1C = buffersinfo->unknown1C;
+	this->buffers_info.unknown1C = requested->unknown1C;
 	this->buffers_info.unknown20_buffer_count_plus_one = present_parameters.BackBufferCount + 1;
 	this->buffers_info.unknown24 = (present_parameters.SwapEffect & 2) != 0;
 	this->buffers_info.unknown25_fullscreen = !present_parameters.Windowed;
@@ -2944,7 +2881,7 @@ GENRESULT NewRenderPipeline::clear_buffers(U32 rp_clear_flags, RECT* viewport_su
 		this->pipeline_states[RP_CLEAR_STENCIL].value);
 	if (v8 < 0)
 	{
-		GENERAL_WARNING(TEMPSTR("clear: %s", HRESULT_GET_ERROR_STRING(v8)));
+		GENERAL_WARNING(TEMPSTR("clear: %s", HRESULT_TO_STRING(v8)));
 	}
 	return (GENRESULT)v8;
 }
@@ -3293,8 +3230,70 @@ GENRESULT NewRenderPipeline::set_perspective(float fovy, float aspect, float zne
 	return GR_OK;
 }
 
+typedef std::unordered_map<IRP_LIGHTHANDLE, U32> light_map2;
+typedef std::vector<IRP_LIGHTHANDLE> light_array2;
+static light_map2 light_to_index;
+static light_array2 index_to_light;
+
+U32 light_count()
+{
+	U32 light_count = 0;
+	size_t count = index_to_light.size();
+	for (size_t index = 0; index < count; index++)
+	{
+		if (!index_to_light[index])
+		{
+			light_count++;
+		}
+	}
+	return light_count;
+}
+
+extern "C"
+{
+	RP8_DEC U32 LightCounter[6] = {};
+	RP8_DEC U32 AlreadyExistsCounter[5] = {};
+}
+
+U32 track_light(IRP_LIGHTHANDLE handle, int index)
+{
+	auto it = light_to_index.find(handle);
+	if (it != light_to_index.end())
+	{
+		AlreadyExistsCounter[index]++;
+		return it->second;
+	}
+
+	size_t count = index_to_light.size();
+	for (size_t index = 0; index < count; index++)
+	{
+		if (!index_to_light[index])
+		{
+			index_to_light[index] = handle;
+			light_to_index[handle] = index;
+			return index;
+		}
+	}
+
+	// need to allocate a new index
+	index_to_light.push_back(handle);
+	light_to_index[handle] = count;
+	return count;
+}
+
+void untrack_light(IRP_LIGHTHANDLE handle)
+{
+	auto it = light_to_index.find(handle);
+	if (it != light_to_index.end())
+	{
+		U32 index = it->second;
+		index_to_light[index] = nullptr;
+		light_to_index.erase(handle);
+	}
+}
 GENRESULT NewRenderPipeline::set_light(IRP_LIGHTHANDLE handle, const D3DLIGHT8* light_values)
 {
+	LightCounter[0]++;
 	// #TODO Remove me. But before you do... level with me... how much was the API designer smoking?
 	ASSERT(handle == light_values);
 
@@ -3302,45 +3301,63 @@ GENRESULT NewRenderPipeline::set_light(IRP_LIGHTHANDLE handle, const D3DLIGHT8* 
 	ASSERT(direct3d_device);	// assert after the create_buffers check
 
 	// add light implicitely
-	tracked_lights[handle] = *light_values;
+	//tracked_lights[handle] = *light_values;
+
+	U32 _light_count = light_count();
+	//GENERAL_ERROR(TEMPSTR("LightCount: %u", U32(_light_count)));
 
 	GENRESULT gr;
-	U32 light_index;
-	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	//U32 light_index;
+	//if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+
+	U32 light_index = track_light(handle,0);
+
 	{
-		if (FAILED(direct3d_device->SetLight(light_index, light_values)))
+		HRESULT hr;
+		if (FAILED(hr = direct3d_device->SetLight(light_index, light_values)))
 		{
-			GENERAL_ERROR(TEMPSTR("SetLight: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("SetLight: %s", HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
+		}
+		else
+		{
+			gr = GR_OK;
 		}
 	}
 
 	rp_rd_light(handle, light_values);
 
-	return GR_OK;
+	return gr;
 }
 
 GENRESULT NewRenderPipeline::destroy_light(IRP_LIGHTHANDLE handle)
 {
-	GENRESULT gr;
-	U32 light_index;
-	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
-	{
-		tracked_lights.erase(handle);
-	}
-	return gr;
+	LightCounter[4]++;
+	untrack_light(handle);
+	return GR_OK;
+
+	//GENRESULT gr;
+	//U32 light_index;
+	//if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	//{
+	//	tracked_lights.erase(handle);
+	//}
+	//return gr;
 }
 
 GENRESULT NewRenderPipeline::get_light(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values)
 {
+	RPPIPELINESTATE;
+	LightCounter[3]++;
 	GENRESULT gr;
-	U32 light_index;
-	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	U32 light_index = track_light(handle, 1);
+	//U32 light_index;
+	//if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
 	{
 		HRESULT hr;
 		if (FAILED(hr = direct3d_device->GetLight(light_index, out_light_values)))
 		{
-			GENERAL_ERROR(TEMPSTR("GetLight: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("GetLight: %s", HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 	}
@@ -3349,14 +3366,20 @@ GENRESULT NewRenderPipeline::get_light(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_li
 
 GENRESULT NewRenderPipeline::set_light_enable(IRP_LIGHTHANDLE handle, U32 enable)
 {
+	if(enable)
+	LightCounter[1]++;
+	else
+	LightCounter[2]++;
+	//enable = 1;
 	GENRESULT gr;
-	U32 light_index;
-	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	U32 light_index = track_light(handle, 2);
+	//U32 light_index;
+	//if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
 	{
 		HRESULT hr;
 		if (FAILED(hr = direct3d_device->LightEnable(light_index, enable)))
 		{
-			GENERAL_ERROR(TEMPSTR("LightEnable: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("LightEnable: %s", HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 	}
@@ -3365,15 +3388,17 @@ GENRESULT NewRenderPipeline::set_light_enable(IRP_LIGHTHANDLE handle, U32 enable
 
 GENRESULT NewRenderPipeline::get_light_enable(IRP_LIGHTHANDLE handle, U32* out_enable)
 {
+	LightCounter[5]++;
 	GENRESULT gr;
-	U32 light_index;
-	if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
+	U32 light_index = track_light(handle, 3);
+	//U32 light_index;
+	//if (SUCCEEDED(gr = get_light_index(handle, &light_index)))
 	{
 		HRESULT hr;
 		BOOL enable;
 		if (FAILED(hr = direct3d_device->GetLightEnable(light_index, &enable)))
 		{
-			GENERAL_ERROR(TEMPSTR("GetLightEnable: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("GetLightEnable: %s", HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -3450,7 +3475,7 @@ GENRESULT NewRenderPipeline::create_texture(int width, int height, const PFenum*
 		D3DPOOL_MANAGED,
 		&direct3d_texture)))
 	{
-		GENERAL_ERROR(TEMPSTR("create_texture: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("create_texture: %s", HRESULT_TO_STRING(hr)));
 		return GR_GENERIC;
 	}
 
@@ -3507,25 +3532,6 @@ GENRESULT NewRenderPipeline::is_texture(IRP_TEXTUREHANDLE htexture)
 	}
 	return gr;
 }
-//
-//static GENRESULT get_texture_surface(IRP_TEXTUREHANDLE htexture, U32 subsurface, IDirect3DSurface8** out_direct3d_texture_surface)
-//{
-//	GENRESULT gr;
-//	HRESULT hr;
-//	DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
-//
-//	if(FAILED(hr = texture->get_subsurface(subsurface, out_direct3d_texture_surface)))
-//	{
-//		GENERAL_ERROR(TEMPSTR("%s failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
-//		gr = GR_GENERIC;
-//	}
-//	else
-//	{
-//		gr = GR_OK;
-//	}
-//
-//	return gr;
-//}
 
 GENRESULT NewRenderPipeline::lock_texture(IRP_TEXTUREHANDLE htexture, U32 subsurface, RPLOCKDATA* lockData)
 {
@@ -3542,7 +3548,7 @@ GENRESULT NewRenderPipeline::lock_texture(IRP_TEXTUREHANDLE htexture, U32 subsur
 		IDirect3DSurface8* direct3d_texture_surface;
 		if (FAILED(hr = texture->get_subsurface(subsurface, &direct3d_texture_surface)))
 		{
-			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -3568,13 +3574,13 @@ GENRESULT NewRenderPipeline::lock_texture(IRP_TEXTUREHANDLE htexture, U32 subsur
 				}
 				else
 				{
-					GENERAL_ERROR(TEMPSTR("%s LockRect failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+					GENERAL_ERROR(TEMPSTR("%s LockRect failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 					gr = GR_GENERIC;
 				}
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("%s GetDesc failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("%s GetDesc failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 			direct3d_texture_surface->Release();
@@ -3599,14 +3605,14 @@ GENRESULT NewRenderPipeline::unlock_texture(IRP_TEXTUREHANDLE htexture, U32 subs
 		IDirect3DSurface8* direct3d_texture_surface;
 		if (FAILED(hr = texture->get_subsurface(subsurface, &direct3d_texture_surface)))
 		{
-			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
 		{
 			if (FAILED(hr = direct3d_texture_surface->UnlockRect()))
 			{
-				GENERAL_ERROR(TEMPSTR("%s UnlockRect failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("%s UnlockRect failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 		}
@@ -3630,7 +3636,7 @@ GENRESULT NewRenderPipeline::get_texture_format(IRP_TEXTUREHANDLE htexture, PFen
 		IDirect3DSurface8* direct3d_texture_surface;
 		if (FAILED(hr = texture->get_subsurface(0, &direct3d_texture_surface)))
 		{
-			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -3645,7 +3651,7 @@ GENRESULT NewRenderPipeline::get_texture_format(IRP_TEXTUREHANDLE htexture, PFen
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("%s GetDesc failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("%s GetDesc failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 			direct3d_texture_surface->Release();
@@ -3690,14 +3696,14 @@ GENRESULT NewRenderPipeline::get_texture_dim(IRP_TEXTUREHANDLE htexture, U32* ou
 				}
 				else
 				{
-					GENERAL_ERROR(TEMPSTR("%s GetLevelDesc failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+					GENERAL_ERROR(TEMPSTR("%s GetLevelDesc failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 					gr = GR_GENERIC;
 				}
 				direct3d_2d_texture->Release();
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("%s QueryInterface for IDirect3DTexture8 failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("%s QueryInterface for IDirect3DTexture8 failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 		}
@@ -3720,14 +3726,14 @@ GENRESULT NewRenderPipeline::get_texture_dim(IRP_TEXTUREHANDLE htexture, U32* ou
 				}
 				else
 				{
-					GENERAL_ERROR(TEMPSTR("%s GetLevelDesc failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+					GENERAL_ERROR(TEMPSTR("%s GetLevelDesc failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 					gr = GR_GENERIC;
 				}
 				direct3d_cube_texture->Release();
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("%s QueryInterface for IDirect3DCubeTexture8 failed %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("%s QueryInterface for IDirect3DCubeTexture8 failed %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 		}
@@ -3762,10 +3768,6 @@ GENRESULT NewRenderPipeline::set_texture_level_data(
 	const void* src_alpha,
 	const RGB* src_palette)
 {
-	// #TODO: Cleanup
-
-	CHECK_DEVICE_LIFETIME();
-
 	for (U32 stage_index = 0; stage_index < _countof(curr_hw_texture); stage_index++)
 	{
 		CACHED_TEXTURE& cached_texture = curr_hw_texture[stage_index];
@@ -3782,40 +3784,34 @@ GENRESULT NewRenderPipeline::set_texture_level_data(
 	DX8Texture* texture = reinterpret_cast<DX8Texture*>(htexture);
 	if (FAILED(hr = texture->get_subsurface(subsurface, &direct3d_texture_surface)))
 	{
-		GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("get_subsurface: failed to get surface %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	else
 	{
-		D3DFORMAT d3d_src_format = pf_to_d3d(*src_format);
-		unused(d3d_src_format);
-
 		D3DSURFACE_DESC desc;
 		direct3d_texture_surface->GetDesc(&desc);
+
+		PFenum dst_format = d3d_to_pf(desc.Format);
+		PixelFormat dest_pixel_format(dst_format);
+		PixelFormat source_pixel_format(*src_format);
 
 		// lock the rect so we can write into it
 		D3DLOCKED_RECT rect;
 		hr = direct3d_texture_surface->LockRect(&rect, nullptr, D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
 		if (FAILED(hr))
 		{
-			GENERAL_ERROR(TEMPSTR("LockRect failed : %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("LockRect failed : %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
 		{
-			PFenum dst_pf = d3d_to_pf(desc.Format);
-			PixelFormat dest_pixel_format(dst_pf);
-			PixelFormat source_pixel_format(*src_format);
-
 			if (dest_pixel_format.is_fourcc())
 			{
-				ASSERT(dst_pf == *src_format);
+				ASSERT(dst_format == *src_format);
 				ASSERT(src_width == desc.Width);
 				ASSERT(src_height == desc.Height);
-
 				memcpy(rect.pBits, src_pixel, desc.Size);
-
-				debug_point;
 			}
 			else
 			{
@@ -3877,7 +3873,7 @@ GENRESULT NewRenderPipeline::begin_scene(void)
 	HRESULT hr;
 	if (FAILED(hr = direct3d_device->BeginScene()))
 	{
-		GENERAL_ERROR(TEMPSTR("begin_scene: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("begin_scene: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3891,7 +3887,7 @@ GENRESULT NewRenderPipeline::end_scene(void)
 	HRESULT hr;
 	if (FAILED(hr = direct3d_device->EndScene()))
 	{
-		GENERAL_ERROR(TEMPSTR("end_scene: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("end_scene: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3912,7 +3908,7 @@ GENRESULT NewRenderPipeline::set_render_state(D3DRENDERSTATETYPE state, U32 valu
 	HRESULT hr;
 	if (FAILED(hr = direct3d_device->SetRenderState(state, value)))
 	{
-		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3926,7 +3922,7 @@ GENRESULT NewRenderPipeline::get_render_state(D3DRENDERSTATETYPE state, U32* val
 	HRESULT hr;
 	if (FAILED(hr = direct3d_device->GetRenderState(state, reinterpret_cast<DWORD*>(value))))
 	{
-		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3940,7 +3936,7 @@ GENRESULT NewRenderPipeline::set_texture_stage_state(U32 stage, D3DTEXTURESTAGES
 	HRESULT hr;
 	if (FAILED(hr = direct3d_device->SetTextureStageState(stage, state, value)))
 	{
-		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3954,7 +3950,7 @@ GENRESULT NewRenderPipeline::get_texture_stage_state(U32 stage, D3DTEXTURESTAGES
 	HRESULT hr;
 	if (FAILED(hr = direct3d_device->GetTextureStageState(stage, state, reinterpret_cast<DWORD*>(value))))
 	{
-		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3973,7 +3969,7 @@ GENRESULT NewRenderPipeline::set_texture_stage_transform(U32 stage, Matrix4 cons
 	D3DTRANSFORMSTATETYPE state = static_cast<D3DTRANSFORMSTATETYPE>(stage + 16);
 	if (FAILED(hr = direct3d_device->SetTransform(state, &M)))
 	{
-		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 	return gr;
@@ -3991,7 +3987,7 @@ GENRESULT NewRenderPipeline::get_texture_stage_transform(U32 stage, Matrix4& out
 	D3DTRANSFORMSTATETYPE state = static_cast<D3DTRANSFORMSTATETYPE>(stage);
 	if (FAILED(hr = direct3d_device->GetTransform(state, &M)))
 	{
-		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("SetRenderState: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 	}
 
@@ -4335,7 +4331,7 @@ GENRESULT NewRenderPipeline::draw_primitive(D3DPRIMITIVETYPE type, U32 vertex_fo
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("DrawPrimitiveUP: %s", HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("DrawPrimitiveUP: %s", HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 
@@ -4373,7 +4369,7 @@ GENRESULT NewRenderPipeline::draw_indexed_primitive(D3DPRIMITIVETYPE type, U32 v
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("DrawIndexedPrimitiveUP: %s", HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("DrawIndexedPrimitiveUP: %s", HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 
@@ -4410,7 +4406,7 @@ GENRESULT NewRenderPipeline::draw_primitive_vb(D3DPRIMITIVETYPE type, IRP_VERTEX
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("DrawPrimitive: %s", HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("DrawPrimitive: %s", HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 
@@ -4454,7 +4450,7 @@ GENRESULT NewRenderPipeline::draw_indexed_primitive_vb(D3DPRIMITIVETYPE type, IR
 				}
 				else
 				{
-					GENERAL_ERROR(TEMPSTR("DrawPrimitive: %s", HRESULT_GET_ERROR_STRING(hr)));
+					GENERAL_ERROR(TEMPSTR("DrawPrimitive: %s", HRESULT_TO_STRING(hr)));
 					gr = GR_GENERIC;
 				}
 
@@ -4471,7 +4467,7 @@ GENRESULT NewRenderPipeline::add_light(IRP_LIGHTHANDLE handle)
 {
 	CHECK_DEVICE_LIFETIME();
 	// #NOTE: Used for world space lights, untouched as long as viewspace lights are enabled
-	NOT_IMPLEMENTED;
+	//NOT_IMPLEMENTED;
 	return GR_NOT_IMPLEMENTED;
 }
 
@@ -4479,7 +4475,7 @@ GENRESULT NewRenderPipeline::remove_light(IRP_LIGHTHANDLE handle)
 {
 	CHECK_DEVICE_LIFETIME();
 	// #NOTE: Used for world space lights, untouched as long as viewspace lights are enabled
-	NOT_IMPLEMENTED;
+	//NOT_IMPLEMENTED;
 	return GR_NOT_IMPLEMENTED;
 }
 
@@ -4487,7 +4483,7 @@ GENRESULT NewRenderPipeline::update_light(IRP_LIGHTHANDLE handle)
 {
 	CHECK_DEVICE_LIFETIME();
 	// #NOTE: Used for world space lights, untouched as long as viewspace lights are enabled
-	NOT_IMPLEMENTED;
+	//NOT_IMPLEMENTED;
 	return GR_NOT_IMPLEMENTED;
 }
 
@@ -4641,7 +4637,7 @@ GENRESULT NewRenderPipeline::release_vertex_buffer(VertexBufferAcquire* locked_v
 		HRESULT hr;
 		if (FAILED(hr = vertex_buffer->unlock_vb()))
 		{
-			GENERAL_ERROR(TEMPSTR("DrawPrimitive: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("DrawPrimitive: %s", HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -4688,7 +4684,7 @@ HRESULT NewRenderPipeline::draw_indexed_primitive(D3DPRIMITIVETYPE type, U32 min
 			start_index,
 			primitive_count)))
 		{
-			GENERAL_WARNING(TEMPSTR("draw_indexed_primitive: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_WARNING(TEMPSTR("draw_indexed_primitive: %s", HRESULT_TO_STRING(hr)));
 		}
 	}
 	return hr;
@@ -4729,7 +4725,7 @@ GENRESULT NewRenderPipeline::create_index_buffer(U32 num_indices, IRP_INDEXBUFFE
 
 	if (FAILED(hr = create_ib(ib_handle, num_indices)))
 	{
-		GENERAL_ERROR(TEMPSTR("create_ib: %s", HRESULT_GET_ERROR_STRING(hr)));
+		GENERAL_ERROR(TEMPSTR("create_ib: %s", HRESULT_TO_STRING(hr)));
 		gr = GR_GENERIC;
 		destroy_index_buffer(&ib_handle);
 	}
@@ -4839,7 +4835,7 @@ GENRESULT NewRenderPipeline::copy_indices(IRP_INDEXBUFFERHANDLE ib_handle, U32* 
 		// #TODO Cleanup. There is actually a DX8IndexBuffer::copy_indices function
 		// that implements the underlying logic here. It passes through the HRESULT
 		// correctly which is how 
-		// GENERAL_WARNING(TEMPSTR("copy_indices: %s", HRESULT_GET_ERROR_STRING(hr)));
+		// GENERAL_WARNING(TEMPSTR("copy_indices: %s", HRESULT_TO_STRING(hr)));
 		// is supposed to get the right error message. Instead right now this code just 
 		// has a GENRESULT which isn't that useful for a debug message
 
@@ -4852,7 +4848,7 @@ GENRESULT NewRenderPipeline::copy_indices(IRP_INDEXBUFFERHANDLE ib_handle, U32* 
 		}
 		else
 		{
-			GENERAL_WARNING(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_WARNING(TEMPSTR("%s: lock_ib failed", __FUNCTION__));
 			gr = GR_GENERIC;
 		}
 	}
@@ -4882,7 +4878,7 @@ GENRESULT NewRenderPipeline::lock_ib(IRP_INDEXBUFFERHANDLE ib_handle, U32* start
 		U32 dst_index = start_index ? *start_index : 0;
 		if (FAILED(hr = index_buffer->lock_ib(dst_index, num_indices, out_data, start_index, syslock)))
 		{
-			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -5076,12 +5072,12 @@ GENRESULT NewRenderPipeline::ressize_vb(IRP_VERTEXBUFFERHANDLE vb_handle, U32 fo
 		HRESULT hr;
 		/*if (FAILED(hr = vertex_buffer->dispose()))
 		{
-			GENERAL_ERROR(TEMPSTR("dispose: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("dispose: %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else */if (FAILED(hr = vertex_buffer->create_vb(direct3d_device, format, num_verts)))
 		{
-			GENERAL_ERROR(TEMPSTR("%s couldnt resize vb (err:%s)", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("%s couldnt resize vb (err:%s)", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -5143,7 +5139,7 @@ GENRESULT NewRenderPipeline::copy_vertices(IRP_VERTEXBUFFERHANDLE vb_handle, U32
 			}
 			else
 			{
-				GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+				GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 				gr = GR_GENERIC;
 			}
 		}
@@ -5170,7 +5166,7 @@ GENRESULT NewRenderPipeline::copy_vertices(IRP_VERTEXBUFFERHANDLE vb_handle, U32
 		}
 		else
 		{
-			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 	}
@@ -5195,7 +5191,7 @@ GENRESULT NewRenderPipeline::lock_vb(IRP_VERTEXBUFFERHANDLE vb_handle, U32* star
 		U32 dst_index = start_index ? *start_index : 0;
 		if (FAILED(hr = vertex_buffer->lock_vb(dst_index, num_verts, out_data, start_index, syslock)))
 		{
-			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("%s: %s", __FUNCTION__, HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -5486,7 +5482,7 @@ GENRESULT NewRenderPipeline::load_cubemap(IFileSystem* IFS, const char* child, I
 		IDirect3DCubeTexture8* direct3d_cubetexture;
 		if (FAILED(hr = load_texture_cubemap(direct3d_device, mapped_file.mapping, mapped_file.file_size, &direct3d_cubetexture)))
 		{
-			GENERAL_ERROR(TEMPSTR("load_texture: %s", HRESULT_GET_ERROR_STRING(hr)));
+			GENERAL_ERROR(TEMPSTR("load_texture: %s", HRESULT_TO_STRING(hr)));
 			gr = GR_GENERIC;
 		}
 		else
@@ -5767,7 +5763,7 @@ static void rpsi_build_render_state_info(RenderStateArray& rsa)
 	// RSA_SET( ANTIALIAS, FALSE );
 	RSA_SET(ZENABLE, TRUE);
 	RSA_SET(FILLMODE, D3DFILL_SOLID);
-	RSA_SET(SHADEMODE, D3DSHADE_GOURAUD);
+	RSA_SET(SHADEMODE, D3DSHADE_PHONG);
 	RSA_SET(LINEPATTERN, 0);
 	RSA_SET(ZWRITEENABLE, TRUE);
 	RSA_SET(ALPHATESTENABLE, FALSE);

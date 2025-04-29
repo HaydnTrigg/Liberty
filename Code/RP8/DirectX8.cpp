@@ -5,7 +5,6 @@
 #include "RPVertexBuffer.h"
 #include "GammaControl.h"
 #include "RPTexture.h"
-#include "RPInternal.h"
 #include "CachedMatrix.h"
 #include "CachedViewport.h"
 #include "CachedTexture.h"
@@ -32,7 +31,7 @@ TRAMPOLINE(GENRESULT, __stdcall, DirectX8_query_device_ability, _sub_6D083D2, IR
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_get_num_display_modes, _sub_6D08461, IRenderPipeline8B* _this, U32* count);
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_get_display_mode, _sub_6D084F2, IRenderPipeline8B* _this, RPDISPLAYMODEINFO* mode, U32 mode_num);
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_select_mode, _sub_6D0869D, IRenderPipeline8B* _this, RPBUFFERSINFO* mode, U32* adapter);
-TRAMPOLINE(GENRESULT, __stdcall, DirectX8_create_buffers, _sub_6D08811, IRenderPipeline8B* _this, HWND hwnd, RPBUFFERSINFO* buffersinfo, RPBUFFERSINFO* out_buffersinfo);
+TRAMPOLINE(GENRESULT, __stdcall, DirectX8_create_buffers, _sub_6D08811, IRenderPipeline8B* _this, HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo);
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_get_buffers, _sub_6D098F3, IRenderPipeline8B* _this, U32* adapter, RPBUFFERSINFO* out_buffersinfo);
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_destroy_buffers, _sub_6D09982, IRenderPipeline8B* _this);
 TRAMPOLINE(GENRESULT, __stdcall, DirectX8_clear_buffers, _sub_6D09B4C, IRenderPipeline8B* _this, U32 rp_clear_flags, RECT* viewport_sub_rect);
@@ -2129,7 +2128,7 @@ public:
 	DACOM_DEFMETHOD(get_num_display_modes)(U32* count) override;
 	DACOM_DEFMETHOD(get_display_mode)(RPDISPLAYMODEINFO* mode, U32 mode_num) override;
 	DACOM_DEFMETHOD(select_mode)(RPBUFFERSINFO* mode, U32* adapter) override;
-	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* buffersinfo, RPBUFFERSINFO* out_buffersinfo) override;
+	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) override;
 	DACOM_DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) override;
 	DACOM_DEFMETHOD(destroy_buffers)(void) override;
 	DACOM_DEFMETHOD(clear_buffers)(U32 rp_clear_flags, RECT* viewport_sub_rect) override;
@@ -2331,9 +2330,9 @@ GENRESULT DirectX8::select_mode(RPBUFFERSINFO* mode, U32* adapter)
 	return gr;
 }
 
-GENRESULT DirectX8::create_buffers(HWND hwnd, RPBUFFERSINFO* buffersinfo, RPBUFFERSINFO* out_buffersinfo)
+GENRESULT DirectX8::create_buffers(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo)
 {
-	GENRESULT gr = DirectX8_create_buffers(this, hwnd, buffersinfo, out_buffersinfo);
+	GENRESULT gr = DirectX8_create_buffers(this, hwnd, requested, out_buffersinfo);
 	return gr;
 }
 

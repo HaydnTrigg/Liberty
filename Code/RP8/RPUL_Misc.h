@@ -23,7 +23,7 @@ HRESULT mem_bitblt(
 	int src_stride,
 	const PixelFormat& src_format,
 	const RGB* src_palette,
-	const U8* src_alpha);
+	const void* src_alpha);
 
 HRESULT mem_bitblt_invert(
 	void* dst_bits,
@@ -37,6 +37,6 @@ HRESULT mem_bitblt_invert(
 	int src_stride,
 	const PixelFormat& src_format,
 	const RGB* src_palette,
-	const U8* src_alpha);
+	const void* src_alpha);
 
 #endif // __RPUL_MISC_H__

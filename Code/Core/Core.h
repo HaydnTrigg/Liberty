@@ -44,6 +44,8 @@ Output coerce_cast(Input const& value)
 	return *reinterpret_cast<Output const*>(&value);
 }
 
+CORE_DEC const char* HRESULT_TO_STRING(HRESULT hr);
+
 #include <Core/fatal.h>
 #include <Core/typedefs.h>
 #include <Core/genresult.h>
