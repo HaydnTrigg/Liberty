@@ -3530,6 +3530,7 @@ _naked _weak void _sub_555470() // _sub_555470
     asm("loc_5554CE: ret;");
     asm("int3;"); // unreachable
 }
+extern "C" char _CUSTOM_DATA[81920] = { /* 0 [0x0]  ?? [0x1] */};
 _naked _weak void _sub_5554D0() // _sub_5554D0
 {
     __DEBUG_ASM(5554D0);
@@ -3651,15 +3652,24 @@ _naked _weak void _sub_5554D0() // _sub_5554D0
     asm("loc_555667: push %ecx;");
     asm("loc_555668: push %edx;");
     asm("loc_555669: push %ebp;");
-    asm("loc_55566A: lea 0x28(%esp),%eax;");
-    asm("loc_55566E: push $4;");
+
+    // asm("loc_55566A: lea 0x28(%esp),%eax;");
+    // asm("loc_55566E: push $4;");
+
+    // custom_buffer
+    asm("loc_55566A: mov $__CUSTOM_DATA,%eax;");
+    asm("loc_55566E: push $128;");
+
     asm("loc_555670: push %eax;");
     asm("loc_555671: call _sub_537F40;");
     asm("loc_555676: mov 0x4C(%esp),%ecx;");
     asm("loc_55567A: push %ebp;");
     asm("loc_55567B: push %ecx;");
     asm("loc_55567C: push %eax;");
-    asm("loc_55567D: lea 0x3C(%esp),%edx;");
+
+    //asm("loc_55567D: lea 0x3C(%esp),%edx;");
+    asm("loc_55567D: mov $__CUSTOM_DATA,%edx;");
+
     asm("loc_555681: push %edx;");
     asm("loc_555682: call _sub_4102C0;");
     asm("loc_555687: add $0x28,%esp;");

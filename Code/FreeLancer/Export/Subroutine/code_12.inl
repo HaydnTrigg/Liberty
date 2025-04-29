@@ -24819,7 +24819,12 @@ _naked _weak void _sub_503070() // _sub_503070
     asm("loc_503250: jne loc_503279;");
     asm("loc_503252: lea 0xC(%esp),%ecx;");
     asm("loc_503256: movl $0xFFFFFFFF,0x24(%esp);");
-    asm("loc_50325E: call _sub_502D90;");
+
+    // w0dk4 lights on beams crash-fix
+    // WritePatchByte(hModFL, 0x103250, 0xEB);
+    //asm("loc_50325E: call _sub_502D90;");
+    asm("loc_50325E: jmp loc_503279;");
+
     asm("loc_503263: pop %edi;");
     asm("loc_503264: pop %esi;");
     asm("loc_503265: xor %al,%al;");
