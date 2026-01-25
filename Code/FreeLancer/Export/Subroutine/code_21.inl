@@ -14159,10 +14159,22 @@ _naked _weak void _sub_5ACCD0() // _sub_5ACCD0
     asm("loc_5ACF5C: push %eax;");
     asm("loc_5ACF5D: calll *_import_5C72F8;");
     asm("loc_5ACF63: lea 0xC8(%esp),%ecx;");
+
+#if 0 // IPv6 Fix
     asm("loc_5ACF6A: push %ecx;");
     asm("loc_5ACF6B: lea 0x20(%esp),%ecx;");
     asm("loc_5ACF6F: push %ecx;");
     asm("loc_5ACF70: lea 0xC8(%esp),%ecx;");
+#else
+    asm("loc_5ACF6A: inc %eax");
+    asm("loc_5ACF6B: jz loc_5ACFD0");
+    asm("loc_5ACF6D: dec %eax");
+    asm("loc_5ACF6E: push %ecx");
+    asm("loc_5ACF6F: lea 0x20(%esp),%edx;");
+    asm("loc_5ACF73: push %edx");
+    asm("loc_5ACF74: sub $8, %ecx");
+#endif
+
     asm("loc_5ACF77: push %ecx;");
     asm("loc_5ACF78: mov %eax,0x40(%esp);");
     asm("loc_5ACF7C: mov 4(%esi),%eax;");
