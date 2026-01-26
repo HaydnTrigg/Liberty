@@ -35,6 +35,7 @@ struct SoundFile
 	unsigned int  loop_end;     // end of the loop region, in samples (inclusive of the last sample in the region, <= num_samples)
 	unsigned int  num_samples;  // the count of samples in the file
 	unsigned int  length;       // length of the data in bytes == num_samples * format.bytes_per_sample
+	unsigned int start_offset;
 	char*        samples;      // sample data, length bytes long.
 };
 

@@ -111,15 +111,15 @@ struct SoundInstance
 // SoundArchetype implementation
 struct SoundArchetype : public ISoundArchetype
 {
-	LPDIRECTSOUNDBUFFER m_lpSoundBuffer;
-	LPDIRECTSOUNDBUFFER m_lpHardwareBuffer;
-
-	WAVEFORMATEX m_dsWaveFormat;
 	SoundFile m_soundFile;
-	SINGLE m_baseAttenuation;
 	U32 m_msDuration;
 	U32 m_bufferFlags;
 	U32 m_numHWBuffers;
+
+	SINGLE m_baseAttenuation;
+	LPDIRECTSOUNDBUFFER m_lpSoundBuffer;
+	LPDIRECTSOUNDBUFFER m_lpHardwareBuffer;
+	WAVEFORMATEX m_dsWaveFormat;
 	
 	BEGIN_DACOM_MAP_INBOUND(SoundArchetype)
 	DACOM_INTERFACE_ENTRY(ISoundArchetype)
@@ -136,6 +136,7 @@ struct SoundArchetype : public ISoundArchetype
 	virtual U32 DACOM_API get_num_channels();
 	virtual U32 DACOM_API get_duration();
 	virtual bool DACOM_API is_loopable();
+	virtual void DACOM_API get_loop_params(U32* loop_start, U32* loop_end);
 
 	virtual	void DACOM_API set_samples(void * samples, U32 length);
 	virtual	GENRESULT DACOM_API set_base_attenuation(SINGLE attenuation);
@@ -360,6 +361,8 @@ protected:
 	//EMAURER like QueryInterface, if result is true the reference count of 'output'
 	//has been increased by 1. call Release () when done.
 	bool query_archetype(SOUND_ARCH_INDEX archetype, SOUND_ARCH*& output);
+
+	static float calculate_frequency_factor(float frequency);
 };
 
 #endif

@@ -81,7 +81,9 @@ const unsigned long labl_ID = CHUNK_NAME('l','a','b','l');
 const unsigned long data_ID = CHUNK_NAME('d','a','t','a');
 const unsigned long cue_ID  = CHUNK_NAME('c','u','e',' ');
 const unsigned long adtl_ID = CHUNK_NAME('a','d','t','l');
-const unsigned long rgn_ID  = CHUNK_NAME('r','g','n',' ');
+const unsigned long rgn_ID = CHUNK_NAME('r', 'g', 'n', ' ');
+const unsigned long fact_ID = CHUNK_NAME('f', 'a', 'c', 't');
+const unsigned long trim_ID = CHUNK_NAME('t','r','i','m');
 
 //
 // Simple Type Definitions
@@ -123,6 +125,16 @@ struct RiffForm : public RiffChunk
 		char          formTypeArray[4];
 		unsigned long formType;
 	};
+};
+
+struct FactChunk
+{
+    DWORD sampleLength; // number of PCM samples AFTER decode
+};
+
+struct TrimChunk
+{
+    DWORD trim;
 };
 
 struct CueData
@@ -184,6 +196,27 @@ bool FindRiffChunk(IFileSystem* fs, DWORD chunkId, RiffChunk& chunk, DWORD start
     return false;
 }
 
+template<typename t_chunk>
+bool FindChunk(IFileSystem* fs, DWORD chunkId, t_chunk& out_chunk, DWORD startPos)
+{
+    DWORD bytesRead = 0;
+    fs->SetFilePointer(0, startPos, NULL, FILE_BEGIN);
+    RiffChunk chunk;
+    while (fs->ReadFile(0, &chunk, sizeof(chunk), &bytesRead) && (bytesRead == sizeof(chunk)))
+    {
+        if (chunk.id == chunkId)
+        {
+            if (fs->ReadFile(0, &out_chunk, sizeof(out_chunk), &bytesRead) && (bytesRead == sizeof(out_chunk)))
+            {
+                return true;
+            }
+        }
+        // Skip current chunk’s data.
+        fs->SetFilePointer(0, chunk.size, NULL, FILE_CURRENT);
+    }
+    return false;
+}
+
 #include <vector>
 
 //
@@ -210,6 +243,17 @@ bool LoadWAV(IFileSystem* fs, SoundFile& data)
 
     // Save the starting position for later chunk scanning.
     DWORD startPos = fs->GetFilePosition(0);
+
+    TrimChunk trim = {};
+    bool has_trim = FindChunk(fs, trim_ID, trim, startPos);
+
+    FactChunk fact = {};
+    bool has_fact = FindChunk(fs, fact_ID, fact, startPos);
+
+    if (has_fact || has_trim)
+    {
+        debug_point;
+    }
 
     // ----- Locate and read the "fmt " chunk -----
     RiffChunk fmtChunk;
@@ -348,8 +392,20 @@ bool LoadWAV(IFileSystem* fs, SoundFile& data)
         delete[] mp3Buffer;
     }
 
+    if (has_fact)
+    {
+        data.length = data.format.bytes_per_sample * fact.sampleLength;
+        data.num_samples = fact.sampleLength;
+    }
+    
+    if (has_trim)
+    {
+        data.start_offset = data.format.bytes_per_sample * trim.trim;
+    }
+
     // ----- Process optional cue and LIST chunks for loop markers -----
     fs->SetFilePointer(0, startPos, NULL, FILE_BEGIN);
+
     bool cueFound = false;
     RiffChunk chunk;
     while (fs->ReadFile(0, &chunk, sizeof(chunk), &bytesRead) && (bytesRead == sizeof(chunk)))
@@ -375,6 +431,7 @@ bool LoadWAV(IFileSystem* fs, SoundFile& data)
             fs->SetFilePointer(0, chunk.size, NULL, FILE_CURRENT);
         }
     }
+
     if (!cueFound)
     {
         // Set default loop markers (from beginning to end).

@@ -404,6 +404,7 @@ struct ISoundArchetype : public IDAComponent
 	virtual void DACOM_API set_samples(void * samples, U32 length) = 0;
 	virtual GENRESULT DACOM_API set_base_attenuation(SINGLE attenuation) = 0;
 	virtual bool DACOM_API is_loopable() = 0;
+	virtual void DACOM_API get_loop_params(U32* loop_start, U32* loop_end) = 0;
 };
 
 #define ISOUNDMANAGER_VERSION 1

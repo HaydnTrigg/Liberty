@@ -241,7 +241,7 @@ GENRESULT SoundArchetype::set_sound_data_from_file(IFileSystem* sourceFile, LPDI
 	// load the wave file (using wavlib.lib)
 	if (LoadWAV(sourceFile, soundFile))
 		// set the the data for the arhchetype
-		if SUCCEEDED(set_sound_data(&soundFile.format, soundFile.length, soundFile.loop_start, soundFile.loop_end, soundFile.samples, lpds, options))
+		if SUCCEEDED(set_sound_data(&soundFile.format, soundFile.length, soundFile.loop_start, soundFile.loop_end, soundFile.samples + soundFile.start_offset, lpds, options))
 		{
 			delete[] soundFile.samples;
 			return GR_OK;
@@ -412,6 +412,12 @@ bool DACOM_API SoundArchetype::is_loopable()
 	return true;
 }
 
+void DACOM_API SoundArchetype::get_loop_params(U32* loop_start, U32* loop_end)
+{
+	*loop_start = m_soundFile.loop_start;
+	*loop_end = m_soundFile.loop_end;
+}
+
 void DACOM_API SoundArchetype::set_samples(void* samples, U32 length)
 {
 	memcpy(m_soundFile.samples, samples, length);
@@ -425,7 +431,7 @@ GENRESULT DACOM_API SoundArchetype::set_base_attenuation(SINGLE attenuation)
 	}
 	else if (attenuation < -100.0)
 	{
-		attenuation = 100.0;
+		attenuation = -100.0;
 	}
 	m_baseAttenuation = attenuation;
 	return GR_OK;
@@ -1111,6 +1117,20 @@ bool SoundManager::query_archetype(SOUND_ARCH_INDEX archetype, SOUND_ARCH*& arch
 	}
 
 	return gr;
+}
+
+float SoundManager::calculate_frequency_factor(float frequency)
+{
+	if (frequency >= -100.0)
+	{
+		if (frequency > 100.0)
+			frequency = 100.0;
+	}
+	else
+	{
+		frequency = -100.0;
+	}
+	return pow(2.0, frequency * 0.01);
 }
 
 // returns a pointer to the archetypes ISoundArchetype interface 
@@ -2350,7 +2370,13 @@ inline bool SoundManager::finished(const SoundInstance& instance)
 		if (query_archetype(archetype, ar))
 		{
 			SINGLE freqFactor = 1.0f;
-			instance.soundSource->get_frequency(&freqFactor);
+			
+			float frequency;
+			if (SUCCEEDED(instance.soundSource->get_frequency(&frequency)))
+			{
+				freqFactor = SoundManager::calculate_frequency_factor(frequency);
+			}
+
 			// scale the sounds duration based on the freq change
 			result = m_currentTime > (instance.soundSource->get_start_time() + (ar->m_msDuration / freqFactor));
 			ar->Release();
@@ -2564,8 +2590,10 @@ void SoundManager::update_instance_data(SoundInstance& instance)
 	}
 
 	// set frequency if enabled
-	if ((instance.m_archetype->m_bufferFlags & SM_ENABLE_FREQUENCY_CONTROL) && SUCCEEDED(instance.soundSource->get_frequency(&freqFactor)))
+	float frequency;
+	if ((instance.m_archetype->m_bufferFlags & SM_ENABLE_FREQUENCY_CONTROL) && SUCCEEDED(instance.soundSource->get_frequency(&frequency)))
 	{
+		freqFactor = SoundManager::calculate_frequency_factor(frequency);
 		if (SUCCEEDED(instance.m_lpSoundBuffer->GetFrequency(&freq)))
 		{
 			SOUND_ARCH* ar;
@@ -2641,7 +2669,13 @@ bool SoundManager::update_position(SoundInstance& instance)
 
 		DWORD freq;	// just used to test the GetFrequency function (even though the buffer might have been created w/ the freq flag, it might not be available)
 		if ((instance.m_DSOUND_buffer_flags & DSBCAPS_CTRLFREQUENCY) && SUCCEEDED(instance.m_lpSoundBuffer->GetFrequency(&freq)))
-			instance.soundSource->get_frequency(&freqFactor);
+		{
+			float frequency;
+			if (SUCCEEDED(instance.soundSource->get_frequency(&frequency)))
+			{
+				freqFactor = SoundManager::calculate_frequency_factor(frequency);
+			}
+		}
 
 		// adjust the time for the frequency
 		msecs *= freqFactor;
