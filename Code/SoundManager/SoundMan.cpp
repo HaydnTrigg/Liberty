@@ -1121,16 +1121,8 @@ bool SoundManager::query_archetype(SOUND_ARCH_INDEX archetype, SOUND_ARCH*& arch
 
 float SoundManager::calculate_frequency_factor(float frequency)
 {
-	if (frequency >= -100.0)
-	{
-		if (frequency > 100.0)
-			frequency = 100.0;
-	}
-	else
-	{
-		frequency = -100.0;
-	}
-	return pow(2.0, frequency * 0.01);
+	frequency = CLAMP(frequency, -100.0f, 100.0f);
+	return pow(2.0f, frequency * 0.01f);
 }
 
 // returns a pointer to the archetypes ISoundArchetype interface 

@@ -3,6 +3,8 @@
 #ifndef __TYPEDEFS_H__
 #define __TYPEDEFS_H__
 
+#include <stdlib.h>
+
 typedef signed long BOOL32;
 typedef unsigned char U8;
 typedef unsigned short U16;
@@ -41,6 +43,10 @@ HYBRID;
 
 #ifndef FALSE
 #define FALSE 0
+#endif
+
+#ifndef CLAMP
+#define CLAMP(VALUE, MIN, MAX) __max(__min(VALUE, MIN), MAX)
 #endif
 
 #endif // __TYPEDEFS_H__

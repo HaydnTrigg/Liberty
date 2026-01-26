@@ -59,8 +59,8 @@ struct DACOM_NO_VTABLE IStreamer2 : IStreamer
 {
 	DACOM_DEFMETHOD_(DWORD, GetSomethingA) () = 0;
 	DACOM_DEFMETHOD_(DWORD, GetSomethingB) () = 0;
-	DACOM_DEFMETHOD_(BOOL32, SetSomethingC) (HSTREAM hStream, DWORD arg) = 0;
-	DACOM_DEFMETHOD_(BOOL32, GetSomethingC) (HSTREAM hStream, DWORD* arg) = 0;
+	DACOM_DEFMETHOD_(BOOL32, SetPan) (HSTREAM hStream, S32 pan) = 0;
+	DACOM_DEFMETHOD_(BOOL32, GetPan) (HSTREAM hStream, S32* pan) const = 0;
 };
 
 #endif // __STREAMER_H__

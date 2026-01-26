@@ -21,7 +21,7 @@ extern "C"
 #define SoundStreamer_GetStatus sub_6EF3530
 #define SoundStreamer_GetSomethingA sub_6EF3940
 #define SoundStreamer_GetSomethingB sub_6EF3950
-#define SoundStreamer_SetSomethingC sub_6EF34D0
+#define SoundStreamer_SetPan sub_6EF34D0
 #define SoundStreamer_GetSomethingC sub_6EF3500
 #define SoundStreamer_Ctor sub_6EF2AF0
 #define SoundStreamer_Initialize sub_6EF2DB0
@@ -55,7 +55,7 @@ extern "C"
 	IStreamer::STATUS __stdcall SoundStreamer_GetStatus(SoundStreamer const* _this, HSTREAM hStream);
 	DWORD __stdcall SoundStreamer_GetSomethingA(SoundStreamer const* _this);
 	DWORD __stdcall SoundStreamer_GetSomethingB(SoundStreamer const* _this);
-	BOOL32 __stdcall SoundStreamer_SetSomethingC(SoundStreamer const* _this, HSTREAM hStream, DWORD arg);
+	BOOL32 __stdcall SoundStreamer_SetPan(SoundStreamer const* _this, HSTREAM hStream, DWORD arg);
 	BOOL32 __stdcall SoundStreamer_GetSomethingC(SoundStreamer const* _this, HSTREAM hStream, DWORD* arg);
 	SoundStreamer* __thiscall SoundStreamer_Ctor(SoundStreamer* _this);
 	GENRESULT __stdcall SoundStreamer_Initialize(void* _this);
@@ -160,7 +160,7 @@ BOOL32 SoundStreamer::Init(STREAMERDESC* desc)
 	return result;
 }
 
-HSTREAM SoundStreamer::Open(const char* filename, struct IFileSystem* parent, DWORD flags)
+HSTREAM SoundStreamer::Open(const char* filename, IFileSystem* parent, DWORD flags)
 {
 	HSTREAM result = SoundStreamer_Open(this, filename, parent, flags);
 	return result;
@@ -186,15 +186,24 @@ BOOL32 SoundStreamer::Restart(HSTREAM hStream)
 
 BOOL32 SoundStreamer::SetVolume(HSTREAM hStream, S32 volume)
 {
-	BOOL32 result = SoundStreamer_SetVolume(this, hStream, volume);
+	BOOL32 result = false;
+	if (hStream != nullptr && hThread != NULL)
+	{
+		hStream->SetVolume(volume);
+		result = true;
+	}
 	return result;
 }
 
 BOOL32 SoundStreamer::GetVolume(HSTREAM hStream, S32* volume) const
 {
-	NOT_IMPLEMENTED;
-	//BOOL32 result = SoundStreamer_GetVolume(this, hStream, volume);
-	//return result;
+	BOOL32 result = false;
+	if (hStream != nullptr && hThread != NULL)
+	{
+		*volume = hStream->GetVolume();
+		result = true;
+	}
+	return result;
 }
 
 SoundStreamer::STATUS SoundStreamer::GetStatus(HSTREAM hStream) const
@@ -206,28 +215,35 @@ SoundStreamer::STATUS SoundStreamer::GetStatus(HSTREAM hStream) const
 DWORD SoundStreamer::GetSomethingA()
 {
 	NOT_IMPLEMENTED;
-	//DWORD result = SoundStreamer_GetSomethingA(this);
-	//return result;
+	return unknown58;
 }
 
 DWORD SoundStreamer::GetSomethingB()
 {
 	NOT_IMPLEMENTED;
-	//DWORD result = SoundStreamer_GetSomethingB(this);
-	//return result;
+	return unknown5C;
 }
 
-BOOL32 SoundStreamer::SetSomethingC(HSTREAM hStream, DWORD arg)
+BOOL32 SoundStreamer::SetPan(HSTREAM hStream, S32 pan)
 {
-	DWORD result = SoundStreamer_SetSomethingC(this, hStream, arg);
+	BOOL32 result = false;
+	if (hStream != nullptr && hThread != NULL)
+	{
+		hStream->SetPan(pan);
+		result = true;
+	}
 	return result;
 }
 
-BOOL32 SoundStreamer::GetSomethingC(HSTREAM hStream, DWORD* arg)
+BOOL32 SoundStreamer::GetPan(HSTREAM hStream, S32* pan) const
 {
-	NOT_IMPLEMENTED;
-	//DWORD result = SoundStreamer_GetSomethingC(this, hStream, arg);
-	//return result;
+	BOOL32 result = false;
+	if (hStream != nullptr && hThread != NULL)
+	{
+		*pan = hStream->GetPan();
+		result = true;
+	}
+	return result;
 }
 
 SoundStreamer::SoundStreamer()
@@ -257,11 +273,16 @@ SoundStreamer::~SoundStreamer()
 
 GENRESULT SoundStreamer::init(AGGDESC* lpDesc)
 {
-	if (global_sound_streamer)
+	if (global_sound_streamer == nullptr)
+	{
+		global_sound_streamer = this;
+		Initialize();
+		return GR_OK;
+	}
+	else
+	{
 		return GR_GENERIC;
-	global_sound_streamer = this;
-	this->Initialize();
-	return GR_OK;
+	}
 }
 
 int SoundStreamer::main()
@@ -275,4 +296,44 @@ int SoundStreamer::main()
 	//}  
 	//this->threadStatus |= 2u;
 	//return 1;
+}
+
+void Streamer::SetPan(LONG pan)
+{
+	current_pan = pan;
+	if (dsound_buffer)
+	{
+		dsound_buffer->SetPan(pan);
+	}
+}
+
+S32 Streamer::GetPan() const
+{
+	LONG pan;
+	if (dsound_buffer && SUCCEEDED(dsound_buffer->GetPan(&pan)))
+	{
+		return pan;
+	}
+
+	return current_pan;
+}
+
+void Streamer::SetVolume(LONG volume)
+{
+	current_volume = volume;
+	if (dsound_buffer)
+	{
+		dsound_buffer->SetVolume(volume);
+	}
+}
+
+S32 Streamer::GetVolume() const
+{
+	LONG volume;
+	if (dsound_buffer && SUCCEEDED(dsound_buffer->GetVolume(&volume)))
+	{
+		return volume;
+	}
+
+	return current_volume;
 }
