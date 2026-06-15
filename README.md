@@ -1,7 +1,12 @@
 ![Liberty](/Docs/Banner.png)
+[![Build Status]][actions] [![Discord Badge]][discord]
 
-This is a prototype export from over 12 months ago cleaned up for testing purposes.
-Improved project files exported with Excalibur version 2 incoming soonTM.
+[Build Status]: https://github.com/HaydnTrigg/Liberty/actions/workflows/main.yml/badge.svg
+[actions]: https://github.com/HaydnTrigg/Liberty/actions
+[Discord Badge]: https://img.shields.io/badge/Discord-PC/Xbox%20Decompilation-blue?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[discord]: https://discord.gg/v3xcYgHvNZ
+
+This is a prototype export from Excalibur. A new delink based matching decomp coming soon.
 
 > [!IMPORTANT]
 > Visual Studio 2022
