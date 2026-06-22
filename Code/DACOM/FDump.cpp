@@ -8,16 +8,15 @@ int __cdecl CUSTOM_DA_ERROR_HANDLER(ErrorCode code, const C8* format, ...)
 {
 	if (!s_swappedFDUMP)
 	{
-		if (_FDUMP == CUSTOM_DA_ERROR_HANDLER)
+		if (FDUMP == CUSTOM_DA_ERROR_HANDLER)
 		{
 			COMMON_FDUMP = FDUMP; // server
 		}
 		else
 		{
-			COMMON_FDUMP = _FDUMP; // game
+			COMMON_FDUMP = FDUMP; // game
 		}
 		FDUMP = CUSTOM_DA_ERROR_HANDLER;
-		_FDUMP = CUSTOM_DA_ERROR_HANDLER;
 		s_swappedFDUMP = true;
 	}
 
@@ -85,17 +84,4 @@ extern "C"
 {
 	typedef int(__cdecl* DA_ERROR_HANDLER) (ErrorCode code, const C8* fmt, ...);
 	DACOM_DEC DA_ERROR_HANDLER FDUMP = CUSTOM_DA_ERROR_HANDLER;
-	DACOM_DEC DA_ERROR_HANDLER _FDUMP = CUSTOM_DA_ERROR_HANDLER;
-	CLANG_DIAGNOSTIC_PUSH();
-	CLANG_DIAGNOSTIC_IGNORED("-Winvalid-noreturn"); // this is intended
-	void explode() 
-	{
-		__debugbreak();
-		if (!IsDebuggerPresent())
-		{
-			// really explode
-			int* x = nullptr; *x = 0;
-		}
-	}
-	CLANG_DIAGNOSTIC_POP();
 }

@@ -2,7 +2,18 @@
 
 #include "typedefs.h"
 
-DACOM_DEC extern "C" __declspec(noreturn) void explode();
+CLANG_DIAGNOSTIC_PUSH();
+CLANG_DIAGNOSTIC_IGNORED("-Winvalid-noreturn"); // this is intended
+static void explode()
+{
+	__debugbreak();
+	if (!IsDebuggerPresent())
+	{
+		// really explode
+		int* x = nullptr; *x = 0;
+	}
+}
+CLANG_DIAGNOSTIC_POP();
 
 // These macros are here so that macro definitions are refer to the severity levels by name, while
 // the C++ code properly uses an enum.
@@ -91,7 +102,6 @@ extern "C"
 {
 	typedef int(__cdecl* DA_ERROR_HANDLER) (ErrorCode code, const C8* fmt, ...);
 	extern DACOM_DEC DA_ERROR_HANDLER FDUMP;
-	extern DACOM_DEC DA_ERROR_HANDLER _FDUMP;
 }
 
 // *** WARNING!!! Ugly macro and conditional compilation code beyond this point.
@@ -108,60 +118,60 @@ extern "C"
 // Example: GENERAL_ERROR ("A bad thing happened!");
 
 #define GENERAL_FATAL(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_FATAL), IDE_ERR_FMT "FATAL:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_FATAL), IDE_ERR_FMT "FATAL:" GENERAL_FMT, __FILE__, __LINE__, reason)
 
 #if DA_ERROR_LEVEL >= __SEV_ERROR
 #define GENERAL_ERROR(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_ERROR), IDE_ERR_FMT "ERROR:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_ERROR), IDE_ERR_FMT "ERROR:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_ERROR(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_WARNING
 #define GENERAL_WARNING(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_WARNING), IDE_ERR_FMT "WARNING:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_WARNING), IDE_ERR_FMT "WARNING:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_WARNING(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_NOTICE
 #define GENERAL_NOTICE(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_NOTICE), IDE_ERR_FMT "NOTICE:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_NOTICE), IDE_ERR_FMT "NOTICE:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_NOTICE(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_1
 #define GENERAL_TRACE_1(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_TRACE_1(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_2
 #define GENERAL_TRACE_2(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_TRACE_2(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_3
 #define GENERAL_TRACE_3(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_TRACE_3(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_4
 #define GENERAL_TRACE_4(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_TRACE_4(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_5
 #define GENERAL_TRACE_5(reason) \
-	(*_FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" GENERAL_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_GENERAL, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" GENERAL_FMT, __FILE__, __LINE__, reason)
 #else
 #define GENERAL_TRACE_5(reason) 
 #endif
@@ -173,53 +183,53 @@ extern "C"
 // Example: FILE_ERROR ("datafile.dat", "Seek");
 
 #define FILE_FATAL(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_FATAL), IDE_ERR_FMT "FATAL:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_FATAL), IDE_ERR_FMT "FATAL:" FILE_FMT, __FILE__, __LINE__, file, operation)
 
 #if DA_ERROR_LEVEL >= __SEV_ERROR
 #define FILE_ERROR(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_ERROR), IDE_ERR_FMT "ERROR:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_ERROR), IDE_ERR_FMT "ERROR:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_ERROR(file, operation) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_WARNING
 #define FILE_WARNING(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_WARNING), IDE_ERR_FMT "WARNING:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_WARNING), IDE_ERR_FMT "WARNING:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_WARNING(file, operation) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_1
 #define FILE_TRACE_1(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_TRACE_1(file, operation) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_2
 #define FILE_TRACE_2(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_TRACE_2(file, operation) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_3
 #define FILE_TRACE_3(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_TRACE_3(file, operation) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_4
 #define FILE_TRACE_4(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_TRACE_4(file, operation) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_5
 #define FILE_TRACE_5(file, operation) \
-	(*_FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" FILE_FMT, __FILE__, __LINE__, file, operation)
+	(*FDUMP) (ErrorCode(ERR_FILE, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" FILE_FMT, __FILE__, __LINE__, file, operation)
 #else
 #define FILE_TRACE_5(file, operation) 
 #endif
@@ -231,53 +241,53 @@ extern "C"
 // Example: MEMORY_ERROR ("Out of memory loading bitmap");
 
 #define MEMORY_FATAL(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_FATAL), IDE_ERR_FMT "FATAL:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_FATAL), IDE_ERR_FMT "FATAL:" MEMORY_FMT, __FILE__, __LINE__, reason)
 
 #if DA_ERROR_LEVEL >= __SEV_ERROR
 #define MEMORY_ERROR(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_ERROR), IDE_ERR_FMT "ERROR:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_ERROR), IDE_ERR_FMT "ERROR:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_ERROR(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_WARNING
 #define MEMORY_WARNING(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_WARNING), IDE_ERR_FMT "WARNING:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_WARNING), IDE_ERR_FMT "WARNING:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_WARNING(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_1
 #define MEMORY_TRACE_1(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_TRACE_1(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_2
 #define MEMORY_TRACE_2(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_TRACE_2(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_3
 #define MEMORY_TRACE_3(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_TRACE_3(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_4
 #define MEMORY_TRACE_4(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_TRACE_4(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_5
 #define MEMORY_TRACE_5(reason) \
-	(*_FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" MEMORY_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_MEMORY, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" MEMORY_FMT, __FILE__, __LINE__, reason)
 #else
 #define MEMORY_TRACE_5(reason) 
 #endif
@@ -289,53 +299,53 @@ extern "C"
 // Example: CORRUPT_ERROR ("Object database");
 
 #define CORRUPT_FATAL(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_FATAL), IDE_ERR_FMT "FATAL:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_FATAL), IDE_ERR_FMT "FATAL:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 
 #if DA_ERROR_LEVEL >= __SEV_ERROR
 #define CORRUPT_ERROR(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_ERROR), IDE_ERR_FMT "ERROR:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_ERROR), IDE_ERR_FMT "ERROR:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_ERROR(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_WARNING
 #define CORRUPT_WARNING(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_WARNING), IDE_ERR_FMT "WARNING:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_WARNING), IDE_ERR_FMT "WARNING:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_WARNING(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_1
 #define CORRUPT_TRACE_1(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_1), IDE_ERR_FMT "TRACE_1:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_TRACE_1(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_2
 #define CORRUPT_TRACE_2(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_2), IDE_ERR_FMT "TRACE_2:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_TRACE_2(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_3
 #define CORRUPT_TRACE_3(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_3), IDE_ERR_FMT "TRACE_3:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_TRACE_3(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_4
 #define CORRUPT_TRACE_4(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_4), IDE_ERR_FMT "TRACE_4:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_TRACE_4(reason) 
 #endif
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_5
 #define CORRUPT_TRACE_5(reason) \
-	(*_FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" CORRUPT_FMT, __FILE__, __LINE__, reason)
+	(*FDUMP) (ErrorCode(ERR_CORRUPT, SEV_TRACE_5), IDE_ERR_FMT "TRACE_5:" CORRUPT_FMT, __FILE__, __LINE__, reason)
 #else
 #define CORRUPT_TRACE_5(reason) 
 #endif
@@ -361,7 +371,7 @@ extern "C"
 #define ASSERT_DEF(sev,expr) \
 if (!(expr)) \
 { \
-	(*_FDUMP) (ErrorCode(ERR_ASSERT, SEV_##sev), IDE_ERR_FMT #sev ":" ASSERT_FMT, __FILE__, __LINE__, #expr); \
+	(*FDUMP) (ErrorCode(ERR_ASSERT, SEV_##sev), IDE_ERR_FMT #sev ":" ASSERT_FMT, __FILE__, __LINE__, #expr); \
 	__debugbreak(); \
 } ((void)0)
 
@@ -417,7 +427,7 @@ if (!(expr)) \
 
 #define BADPARAM_DEF(sev,expr) {\
 	if (!(expr)) { \
-	(*_FDUMP) (ErrorCode(ERR_BADPARAM, SEV_##sev), IDE_ERR_FMT #sev ":" BADPARAM_FMT, __FILE__, __LINE__, #expr); \
+	(*FDUMP) (ErrorCode(ERR_BADPARAM, SEV_##sev), IDE_ERR_FMT #sev ":" BADPARAM_FMT, __FILE__, __LINE__, #expr); \
 	assert(expr); \
 	} \
 }
@@ -473,7 +483,7 @@ if (!(expr)) \
 // Example: PERFORMANCE_TRACE1 ("Nothing to do!");
 
 #define PERFORMANCE_DEF(sev,expr) \
-	(*_FDUMP) (ErrorCode(ERR_PERFORMANCE, SEV_##sev), IDE_ERR_FMT #sev ":" PERFORMANCE_FMT, __FILE__, __LINE__, #expr)
+	(*FDUMP) (ErrorCode(ERR_PERFORMANCE, SEV_##sev), IDE_ERR_FMT #sev ":" PERFORMANCE_FMT, __FILE__, __LINE__, #expr)
 
 #if DA_ERROR_LEVEL >= __SEV_TRACE_1
 #define PERFORMANCE_TRACE_1(expr) PERFORMANCE_DEF(TRACE_1,expr)
@@ -543,14 +553,14 @@ if (!(expr)) \
 #define UNREACHABLE_DEF(sev) \
 	_Pragma("clang diagnostic push") \
 	_Pragma("clang diagnostic ignored \"-Wexceptions\"") \
-	do { (*_FDUMP) (ErrorCode(ERR_UNREACHABLE, SEV_##sev), IDE_ERR_FMT #sev ":" UNREACHABLE_FMT, __FILE__, __LINE__); \
+	do { (*FDUMP) (ErrorCode(ERR_UNREACHABLE, SEV_##sev), IDE_ERR_FMT #sev ":" UNREACHABLE_FMT, __FILE__, __LINE__); \
 	__debugbreak(); explode(); __assume(0); } while(false) \
 	_Pragma("clang diagnostic pop")
 
 #else
 
 #define UNREACHABLE_DEF(sev) \
-	((*_FDUMP) (ErrorCode(ERR_UNREACHABLE, SEV_##sev), IDE_ERR_FMT #sev ":" UNREACHABLE_FMT, __FILE__, __LINE__), __assume(0))
+	((*FDUMP) (ErrorCode(ERR_UNREACHABLE, SEV_##sev), IDE_ERR_FMT #sev ":" UNREACHABLE_FMT, __FILE__, __LINE__), __assume(0))
 
 #endif
 
@@ -583,14 +593,14 @@ if (!(expr)) \
 #define NOT_IMPLEMENTED_DEF(sev) \
 	_Pragma("clang diagnostic push") \
 	_Pragma("clang diagnostic ignored \"-Wexceptions\"") \
-	do { (*_FDUMP) (ErrorCode(ERR_NOT_IMPLEMENTED, SEV_##sev), IDE_ERR_FMT #sev ":" UNREACHABLE_FMT, __FILE__, __LINE__); \
+	do { (*FDUMP) (ErrorCode(ERR_NOT_IMPLEMENTED, SEV_##sev), IDE_ERR_FMT #sev ":" UNREACHABLE_FMT, __FILE__, __LINE__); \
 	__debugbreak(); explode(); __assume(0); } while(false) \
 	_Pragma("clang diagnostic pop")
 
 #else
 
 #define NOT_IMPLEMENTED_DEF(sev) \
-	((*_FDUMP) (ErrorCode(ERR_NOT_IMPLEMENTED, SEV_##sev), IDE_ERR_FMT #sev ":" NOT_IMPLEMENTED_FMT, __FILE__, __LINE__), __assume(0))
+	((*FDUMP) (ErrorCode(ERR_NOT_IMPLEMENTED, SEV_##sev), IDE_ERR_FMT #sev ":" NOT_IMPLEMENTED_FMT, __FILE__, __LINE__), __assume(0))
 
 #endif
 

@@ -398,9 +398,10 @@ target_link_libraries(RP8 Core DACOM x86math dxguid.lib)
 target_link_libraries(RendComp Core)
 
 # TODO target_include_libraries
-# Need to add the include directories for these projects, but not 
+# Need to add the include directories for these projects, but not
 # hard link them because they use DACOM to query the interface
 target_link_libraries(SoundManager ReadFile)
+target_link_libraries(SoundStreamer ReadFile)
 target_link_libraries(RP8 ReadFile)
 
 add_dependencies(FreeLancer 
