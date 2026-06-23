@@ -215,6 +215,8 @@ function(add_liberty_project TARGET_NAME TARGET_TYPE TARGET_FOLDERS TARGET_SUBDI
         target_compile_definitions(${TARGET_NAME} PRIVATE "_CRT_SECURE_NO_WARNINGS")
         target_compile_definitions(${TARGET_NAME} PRIVATE "$<$<CONFIG:Debug>:_DEBUG>")
         target_compile_definitions(${TARGET_NAME} PUBLIC "_ALLOW_KEYWORD_MACROS")
+        # Identifies the host module in DACOM component-registration diagnostics.
+        target_compile_definitions(${TARGET_NAME} PRIVATE "DACOM_LIBRARY_NAME=\"${TARGET_NAME}\"")
     else()
         set_property(TARGET ${TARGET_NAME} PROPERTY VS_GLOBAL_IncludePath "${DXSDK_INCLUDE_DIR};${LIBERTY_SOURCE_DIR};${LIBERTY_GENERATED_DIR};$(LLVMInstallDir)/lib/clang/$(LLVMIncludeVersion)/include")
     endif()
@@ -295,10 +297,10 @@ add_liberty_project(Alchemy "shared" "Alchemy" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(zlib "shared" "zlib" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(ximage "shared" "ximage" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(x86math "shared" "x86math" ${LIBERTY_EXE_DIRECTORY})
+add_liberty_project(x86math_static "library" "x86math" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(THORN "shared" "THORN" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(System "shared" "System" ${LIBERTY_EXE_DIRECTORY})
-add_liberty_project(SoundStreamer "shared" "SoundStreamer" ${LIBERTY_EXE_DIRECTORY})
-add_liberty_project(SoundManager "shared" "SoundManager" ${LIBERTY_EXE_DIRECTORY})
+add_liberty_project(Sound "shared" "Sound" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(Shading "shared" "Shading" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(Server "shared" "Server" ${LIBERTY_EXE_DIRECTORY})
 add_liberty_project(RPCLocal "shared" "RPCLocal" ${LIBERTY_EXE_DIRECTORY})
@@ -323,10 +325,10 @@ set_target_properties(Alchemy PROPERTIES FOLDER "Library")
 set_target_properties(zlib PROPERTIES FOLDER "Library")
 set_target_properties(ximage PROPERTIES FOLDER "Library")
 set_target_properties(x86math PROPERTIES FOLDER "Library")
+set_target_properties(x86math_static PROPERTIES FOLDER "Library")
 set_target_properties(THORN PROPERTIES FOLDER "Library")
 set_target_properties(System PROPERTIES FOLDER "Library")
-set_target_properties(SoundStreamer PROPERTIES FOLDER "Library")
-set_target_properties(SoundManager PROPERTIES FOLDER "Library")
+set_target_properties(Sound PROPERTIES FOLDER "Library")
 set_target_properties(Shading PROPERTIES FOLDER "Library")
 set_target_properties(Server PROPERTIES FOLDER "Library")
 set_target_properties(RPCLocal PROPERTIES FOLDER "Library")
@@ -366,7 +368,7 @@ target_compile_definitions(ReadFile PUBLIC "READFILE_EXTRA_LOGGING")
 target_compile_definitions(ReadFile PUBLIC "UTF_FILESYSTEM")
 #target_compile_definitions(ReadFile PUBLIC "MEM_FILE_FILESYSTEM")
 #target_compile_definitions(ReadFile PUBLIC "SEARCH_PATH_FILESYSTEM")
-#target_compile_definitions(SoundManager PUBLIC "DA_THREAD_SAFE")
+#target_compile_definitions(Sound PUBLIC "DA_THREAD_SAFE")
 
 target_link_libraries(RemoteServer Core)
 target_link_libraries(RemoteClient Core)
@@ -387,10 +389,14 @@ target_link_libraries(Alchemy Core)
 target_link_libraries(zlib Core)
 target_link_libraries(ximage Core)
 target_link_libraries(x86math Core DACOM)
+target_compile_definitions(x86math_static PUBLIC "X86MATH_DEC=")
+get_target_property(x86math_static_sources x86math_static SOURCES)
+list(FILTER x86math_static_sources EXCLUDE REGEX "DllMain\\.cpp$")
+set_target_properties(x86math_static PROPERTIES SOURCES "${x86math_static_sources}")
+target_link_libraries(x86math_static Core DACOM)
 target_link_libraries(THORN Core DACOM)
 target_link_libraries(System Core)
-target_link_libraries(SoundStreamer Core DACOM MSAcm32.Lib)
-target_link_libraries(SoundManager Core DACOM x86math MSAcm32.Lib Winmm.lib)
+target_link_libraries(Sound Core DACOM x86math_static ReadFile MSAcm32.Lib Winmm.lib xaudio2.lib)
 target_link_libraries(Shading Core)
 target_link_libraries(Server Core DACOM x86math)
 target_link_libraries(RPCLocal Core)
@@ -400,8 +406,6 @@ target_link_libraries(RendComp Core)
 # TODO target_include_libraries
 # Need to add the include directories for these projects, but not
 # hard link them because they use DACOM to query the interface
-target_link_libraries(SoundManager ReadFile)
-target_link_libraries(SoundStreamer ReadFile)
 target_link_libraries(RP8 ReadFile)
 
 add_dependencies(FreeLancer 
@@ -425,8 +429,7 @@ add_dependencies(FreeLancer
     x86math
     THORN
     System
-    SoundStreamer
-    SoundManager
+    Sound
     Shading
     Server
     RPCLocal
@@ -462,8 +465,7 @@ add_dependencies(FLServer
     x86math
     THORN
     System
-    SoundStreamer
-    SoundManager
+    Sound
     Shading
     Server
     RPCLocal

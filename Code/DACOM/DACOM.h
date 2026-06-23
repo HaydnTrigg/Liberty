@@ -69,3 +69,67 @@ namespace LogStream
 	DACOM_DEC bool Startup(char const*);
 	DACOM_DEC void Update(float);
 };
+
+//--------------------------------------------------------------------------//
+//---------------------Component registration helpers-----------------------//
+//--------------------------------------------------------------------------//
+//
+// Convenience helpers for the common "create a component factory, register it
+// with the manager, then later unregister it" pattern every Liberty DLL uses.
+//
+// 'library_name' identifies the host module in diagnostics; each build target
+// sets it through the DACOM_LIBRARY_NAME compile definition (see the CMake
+// add_liberty_project macro). 'priority' is required.
+//
+
+#ifndef DACOM_LIBRARY_NAME
+#define DACOM_LIBRARY_NAME "DACOM"
+#endif
+
+// Creates and registers an aggregatable component factory for 'interface_name'.
+// Returns the factory pointer (kept alive by the manager) to hand back to
+// UnregisterComponentFactory(); returns NULL on failure.
+template <typename ClassType, typename DescType = AGGDESC>
+IComponentFactory* RegisterComponentFactory(const char* library_name, const char* interface_name, U32 priority)
+{
+	ICOManager* pDACOM = DACOM_Acquire();
+	if (pDACOM == nullptr)
+	{
+		GENERAL_WARNING(TEMPSTR("%s: unable to acquire DACOM to register component '%s'!\n", library_name, interface_name));
+		return nullptr;
+	}
+
+	IComponentFactory* factory = new DAComponentFactory2<ClassType, DescType>(interface_name);
+	if (factory == nullptr)
+	{
+		GENERAL_WARNING(TEMPSTR("%s: unable to create factory for '%s'!\n", library_name, interface_name));
+		return nullptr;
+	}
+
+	if (pDACOM->RegisterComponent(factory, interface_name, priority) != GR_OK)
+	{
+		GENERAL_WARNING(TEMPSTR("%s: unable to register component '%s'!\n", library_name, interface_name));
+		factory->Release();
+		return nullptr;
+	}
+
+	// The manager keeps its own reference; release ours but return the pointer as a handle for UnregisterComponentFactory().
+	factory->Release();
+	return factory;
+}
+
+// Unregisters a factory previously returned by RegisterComponentFactory().
+inline void UnregisterComponentFactory(const char* library_name, IComponentFactory* factory, const char* interface_name)
+{
+	ICOManager* pDACOM = DACOM_Acquire();
+	if (pDACOM == nullptr)
+	{
+		GENERAL_WARNING(TEMPSTR("%s: unable to acquire DACOM to unregister component '%s'!\n", library_name, interface_name));
+		return;
+	}
+
+	if (factory != nullptr)
+	{
+		pDACOM->UnregisterComponent(factory, interface_name);
+	}
+}

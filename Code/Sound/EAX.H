@@ -1,4 +1,12 @@
-// EAX.H -- DirectSound Environmental Audio Extensions
+/*
+ * EAX.H
+ *
+ * DirectSound Environmental Audio Extensions (EAX) definitions: the reverb
+ * property GUIDs, property enumerations, the environment list and the per-preset
+ * tuning. Retained verbatim as the canonical EAX vendor definitions; the
+ * SoundManager uses only the environment enumeration (EAX_ENVIRONMENT_*) to
+ * clamp and select reverb environments when driving the XAudio2 backend.
+ */
 
 #ifndef EAX_H_INCLUDED
 #define EAX_H_INCLUDED
