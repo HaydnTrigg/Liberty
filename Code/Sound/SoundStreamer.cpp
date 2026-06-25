@@ -417,14 +417,6 @@ static IComponentFactory* g_soundStreamerFactory = nullptr;
 extern "C"
 {
 	/*
-	 * Creates the DACOM factory for the SoundStreamer component.
-	 */
-	IComponentFactory* CreateSoundStreamerFactory(void)
-	{
-		return new DAComponentFactory2<DAComponentAggregate<SoundStreamer>, AGGDESC>(CLSID_SoundStreamer);
-	}
-
-	/*
 	 * Registers the SoundStreamer component factory with the component manager.
 	 */
 	void Register_SoundStreamer()

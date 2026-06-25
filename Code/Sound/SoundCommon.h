@@ -62,7 +62,6 @@ struct DACOM_NO_VTABLE SoundCommon : ISoundCommon, IAggregateComponent
  */
 extern "C"
 {
-	SOUND_DEC IComponentFactory* CreateSoundCommonFactory(void);
 	SOUND_DEC void Register_SoundCommon();
 	SOUND_DEC void Shutdown_SoundCommon();
 }

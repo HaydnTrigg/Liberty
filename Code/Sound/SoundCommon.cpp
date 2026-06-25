@@ -634,14 +634,6 @@ static IComponentFactory* g_soundCommonFactory = nullptr;
 extern "C"
 {
 	/*
-	 * Creates the DACOM factory for the SoundCommon component.
-	 */
-	IComponentFactory* CreateSoundCommonFactory(void)
-	{
-		return new DAComponentFactory2<DAComponentAggregate<SoundCommon>, AGGDESC>(CLSID_SoundCommon);
-	}
-
-	/*
 	 * Registers the SoundCommon component factory with the component manager.
 	 */
 	void Register_SoundCommon()

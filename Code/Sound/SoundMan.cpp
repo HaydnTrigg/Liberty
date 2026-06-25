@@ -1836,14 +1836,6 @@ static IComponentFactory* g_soundManagerFactory = nullptr;
 extern "C"
 {
 	/*
-	 * Creates the DACOM factory for the SoundManager component.
-	 */
-	IComponentFactory* CreateSoundManagerFactory(void)
-	{
-		return new DAComponentFactory2<DAComponentAggregate<SoundManager>, AGGDESC>(CLSID_SoundManager);
-	}
-
-	/*
 	 * Registers the SoundManager component factory with the component manager.
 	 */
 	void Register_SoundManager()

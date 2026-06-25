@@ -1,16 +1,38 @@
-#include <Windows.h>
-#include <PCH.h>
+#include <windows.h>
+#include <DACOM.h>
 
+#include "ISystem.h"
+
+/*
+ * DllMain.cpp
+ *
+ * Entry point for system.dll. The DLL contains a single DACOM component, the
+ * SystemContainer (the "[System]" section loader); this entry point registers it
+ * on attach and unregisters it on detach.
+ *
+ * The shipped system.dll only registered on attach (it did no detach cleanup);
+ * the symmetric Shutdown_SystemContainer() here follows the modern Liberty
+ * convention and is harmless to the original behaviour.
+ */
+
+// Marks this as a Liberty-built DLL (read by DACOM's library scan for logging).
 extern "C" __declspec(dllexport) void Liberty() {}
 
-_naked BOOL __stdcall EntryPoint(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
+BOOL DACOM_API DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-	asm("movl ___entry_ptr, %eax");
-	asm("jmp *%eax");
-}
+	(void)lpvReserved;
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
-{
-	BOOL Result = EntryPoint(hinstDLL, fdwReason, lpvReserved);
-	return Result;
+	switch (fdwReason)
+	{
+	case DLL_PROCESS_ATTACH:
+		DisableThreadLibraryCalls(hinstDLL);
+		Register_SystemContainer();
+		break;
+
+	case DLL_PROCESS_DETACH:
+		Shutdown_SystemContainer();
+		break;
+	}
+
+	return TRUE;
 }

@@ -374,7 +374,6 @@ protected:
  */
 extern "C"
 {
-	SOUND_DEC IComponentFactory* CreateSoundManagerFactory(void);
 	SOUND_DEC void Register_SoundManager();
 	SOUND_DEC void Shutdown_SoundManager();
 }

@@ -110,7 +110,6 @@ private:
  */
 extern "C"
 {
-	SOUND_DEC IComponentFactory* CreateSoundStreamerFactory(void);
 	SOUND_DEC void Register_SoundStreamer();
 	SOUND_DEC void Shutdown_SoundStreamer();
 }
