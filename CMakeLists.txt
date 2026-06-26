@@ -397,10 +397,10 @@ target_link_libraries(x86math_static Core DACOM)
 target_link_libraries(THORN Core DACOM)
 target_link_libraries(System Core DACOM)
 target_link_libraries(Sound Core DACOM x86math_static ReadFile MSAcm32.Lib Winmm.lib xaudio2.lib)
-target_link_libraries(Shading Core)
 target_link_libraries(Server Core DACOM x86math)
 target_link_libraries(RPCLocal Core)
 target_link_libraries(RP8 Core DACOM x86math dxguid.lib)
+target_link_libraries(Shading Core DACOM RP8)
 target_link_libraries(RendComp Core)
 
 # TODO target_include_libraries

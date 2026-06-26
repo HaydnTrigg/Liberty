@@ -2287,32 +2287,35 @@ _naked _weak void _sub_6EC3810() // _sub_6EC3810
 {
     __DEBUG_ASM(6EC3810);
     // chunk 0x6EC3810 _sub_6EC3810
-    asm("loc_6EC3810: push %esi;");
-    asm("loc_6EC3811: push %edi;");
-    asm("loc_6EC3812: calll *_import_6ED1008;");
-    asm("loc_6EC3818: mov %eax,%edi;");
-    asm("loc_6EC381A: test %edi,%edi;");
-    asm("loc_6EC381C: je loc_6EC3859;");
-    asm("loc_6EC381E: push $0xC;");
-    asm("loc_6EC3820: call _sub_6ED0C5C;");
-    asm("loc_6EC3825: mov %eax,%esi;");
-    asm("loc_6EC3827: add $4,%esp;");
-    asm("loc_6EC382A: test %esi,%esi;");
-    asm("loc_6EC382C: je loc_6EC3859;");
-    asm("loc_6EC382E: push $0x80000000;");
-    asm("loc_6EC3833: push $_data_6ED4BF0;");
-    asm("loc_6EC3838: push %esi;");
-    asm("loc_6EC3839: movl $1,4(%esi);");
-    asm("loc_6EC3840: movl $_data_6ED4BF0,8(%esi);");
-    asm("loc_6EC3847: movl $_off_6ED29EC,(%esi);");
-    asm("loc_6EC384D: mov (%edi),%eax;");
-    asm("loc_6EC384F: push %edi;");
-    asm("loc_6EC3850: calll *0x10(%eax);");
-    asm("loc_6EC3853: mov (%esi),%ecx;");
-    asm("loc_6EC3855: push %esi;");
-    asm("loc_6EC3856: calll *8(%ecx);");
-    asm("loc_6EC3859: pop %edi;");
-    asm("loc_6EC385A: pop %esi;");
+    // 
+    // Register_TextureLibrary
+    // 
+    //asm("loc_6EC3810: push %esi;");
+    //asm("loc_6EC3811: push %edi;");
+    //asm("loc_6EC3812: calll *_import_6ED1008;");
+    //asm("loc_6EC3818: mov %eax,%edi;");
+    //asm("loc_6EC381A: test %edi,%edi;");
+    //asm("loc_6EC381C: je loc_6EC3859;");
+    //asm("loc_6EC381E: push $0xC;");
+    //asm("loc_6EC3820: call _sub_6ED0C5C;");
+    //asm("loc_6EC3825: mov %eax,%esi;");
+    //asm("loc_6EC3827: add $4,%esp;");
+    //asm("loc_6EC382A: test %esi,%esi;");
+    //asm("loc_6EC382C: je loc_6EC3859;");
+    //asm("loc_6EC382E: push $0x80000000;");
+    //asm("loc_6EC3833: push $_data_6ED4BF0;");
+    //asm("loc_6EC3838: push %esi;");
+    //asm("loc_6EC3839: movl $1,4(%esi);");
+    //asm("loc_6EC3840: movl $_data_6ED4BF0,8(%esi);");
+    //asm("loc_6EC3847: movl $_off_6ED29EC,(%esi);");
+    //asm("loc_6EC384D: mov (%edi),%eax;");
+    //asm("loc_6EC384F: push %edi;");
+    //asm("loc_6EC3850: calll *0x10(%eax);");
+    //asm("loc_6EC3853: mov (%esi),%ecx;");
+    //asm("loc_6EC3855: push %esi;");
+    //asm("loc_6EC3856: calll *8(%ecx);");
+    //asm("loc_6EC3859: pop %edi;");
+    //asm("loc_6EC385A: pop %esi;");
     asm("loc_6EC385B: ret;");
     asm("int3;"); // unreachable
 }
