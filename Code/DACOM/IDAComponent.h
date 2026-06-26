@@ -53,9 +53,9 @@ DACOM_INTERFACE(IDAComponent, IID_IDAComponent);
 // Abstract base class from which all DA component classes must be derived
 struct DACOM_NO_VTABLE IDAComponent
 {
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance) = 0;
-	DACOM_DEFMETHOD_(U32, AddRef) (void) = 0;
-	DACOM_DEFMETHOD_(U32, Release) (void) = 0;
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance) = 0;
+	DEFMETHOD_(U32, AddRef) (void) = 0;
+	DEFMETHOD_(U32, Release) (void) = 0;
 };
 
 #define IID_IComponentFactory DACOM_MAKE_IID("IComponentFactory")
@@ -63,7 +63,7 @@ DACOM_INTERFACE(IComponentFactory, IID_IComponentFactory);
 // Abstract class from which all class factories inherit
 struct DACOM_NO_VTABLE IComponentFactory : public IDAComponent
 {
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance) = 0;
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance) = 0;
 };
 
 #define IID_IAggregateComponent DACOM_MAKE_IID("IAggregateComponent")
@@ -71,5 +71,5 @@ DACOM_INTERFACE(IAggregateComponent, IID_IAggregateComponent);
 // Abstract class from which all aggregatable classes inherit
 struct DACOM_NO_VTABLE IAggregateComponent : public IDAComponent
 {
-	DACOM_DEFMETHOD(Initialize) (void) = 0;
+	DEFMETHOD(Initialize) (void) = 0;
 };

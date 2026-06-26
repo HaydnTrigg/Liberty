@@ -43,7 +43,7 @@ struct SysConInner : public DAComponentInner<SystemContainer>
 	{
 	}
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
 };
 
 /*
@@ -101,39 +101,39 @@ struct SystemContainer : public ISystemContainer, IDAConnectionPointContainer
 
 	// *** IDAComponent methods ***
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance)
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance)
 	{
 		return outerComponent->QueryInterface(interface_name, instance);
 	}
 
-	DACOM_DEFMETHOD_(U32, AddRef) (void)
+	DEFMETHOD_(U32, AddRef) (void)
 	{
 		return outerComponent->AddRef();
 	}
 
-	DACOM_DEFMETHOD_(U32, Release) (void)
+	DEFMETHOD_(U32, Release) (void)
 	{
 		return outerComponent->Release();
 	}
 
 	// *** ISystemContainer methods ***
 
-	DACOM_DEFMETHOD(LoadSystemComponents) (void);
-	DACOM_DEFMETHOD(Shutdown) (void);
-	DACOM_DEFMETHOD(AddComponent) (const AGGDESC* descriptor);
+	DEFMETHOD(LoadSystemComponents) (void);
+	DEFMETHOD(Shutdown) (void);
+	DEFMETHOD(AddComponent) (const AGGDESC* descriptor);
 
 	// *** IAggregateComponent methods ***
 
-	DACOM_DEFMETHOD(Initialize) (void);
+	DEFMETHOD(Initialize) (void);
 
 	// *** ISystemComponent methods ***
 
-	DACOM_DEFMETHOD_(void, Update) (void);
+	DEFMETHOD_(void, Update) (void);
 
 	// *** IDAConnectionPointContainer methods ***
 
-	DACOM_DEFMETHOD(FindConnectionPoint) (const C8* connectionName, struct IDAConnectionPoint** connPoint);
-	DACOM_DEFMETHOD_(BOOL32, EnumerateConnectionPoints) (CONNCONTAINER_ENUM_PROC proc, void* context = 0);
+	DEFMETHOD(FindConnectionPoint) (const C8* connectionName, struct IDAConnectionPoint** connPoint);
+	DEFMETHOD_(BOOL32, EnumerateConnectionPoints) (CONNCONTAINER_ENUM_PROC proc, void* context = 0);
 
 	// Returns the most-derived IDAComponent base (used as the aggregation outer).
 	IDAComponent* getBase(void)

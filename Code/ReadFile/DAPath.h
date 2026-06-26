@@ -49,12 +49,12 @@ struct DACOM_NO_VTABLE DAPath : public ISearchPath
 
 	// *** IComponentFactory methods ***
 
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
 
 	// *** ISearchPath methods ***
 
-	DACOM_DEFMETHOD(SetPath) (const C8* path);
-	DACOM_DEFMETHOD_(U32, GetPath) (C8* path, U32 bufferSize) const;
+	DEFMETHOD(SetPath) (const C8* path);
+	DEFMETHOD_(U32, GetPath) (C8* path, U32 bufferSize) const;
 
 	// *** DAPath methods ***
 

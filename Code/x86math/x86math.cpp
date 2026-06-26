@@ -31,72 +31,72 @@ struct x86MathEngine : public I3DMathEngine, IComponentFactory
 
 	// IDAComponent interface
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance) override;
-	DACOM_DEFMETHOD_(U32, AddRef) (void) override;
-	DACOM_DEFMETHOD_(U32, Release) (void) override;
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance) override;
+	DEFMETHOD_(U32, AddRef) (void) override;
+	DEFMETHOD_(U32, Release) (void) override;
 
 	// IComponentFactory interface
 
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance) override;
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance) override;
 
 	// I3DMathEngine interface
 
 	// Matrix and Transform operations.
 
-	DACOM_DEFMETHOD(inverse) (Matrix& dst, const Matrix& m) override;
-	DACOM_DEFMETHOD(scale) (Matrix& dst, const Matrix& m, SINGLE s) override;
-	DACOM_DEFMETHOD(general_inverse) (Transform& dst, SINGLE& w, const Transform& m) override;
+	DEFMETHOD(inverse) (Matrix& dst, const Matrix& m) override;
+	DEFMETHOD(scale) (Matrix& dst, const Matrix& m, SINGLE s) override;
+	DEFMETHOD(general_inverse) (Transform& dst, SINGLE& w, const Transform& m) override;
 
 	// Determinant of matrix.
-	DACOM_DEFMETHOD_(SINGLE, det) (const Matrix& m) override;
+	DEFMETHOD_(SINGLE, det) (const Matrix& m) override;
 
 	// Matrix and Transform concatenation.
 
-	DACOM_DEFMETHOD(mul) (Matrix& dst, const Matrix& m1, const Matrix& m2) override;
-	DACOM_DEFMETHOD(mul) (Transform& dst, const Transform& m1, const Transform& m2) override;
+	DEFMETHOD(mul) (Matrix& dst, const Matrix& m1, const Matrix& m2) override;
+	DEFMETHOD(mul) (Transform& dst, const Transform& m1, const Transform& m2) override;
 
 	// Matrix and Transform operation on Vectors.
 
-	DACOM_DEFMETHOD(transform) (Vector& dst, const Matrix& m, const Vector& v) override;
-	DACOM_DEFMETHOD(transform) (Vector& dst, const Transform& t, const Vector& v) override;
+	DEFMETHOD(transform) (Vector& dst, const Matrix& m, const Vector& v) override;
+	DEFMETHOD(transform) (Vector& dst, const Transform& t, const Vector& v) override;
 
 	// rotate with no translation.
 
-	DACOM_DEFMETHOD(rotate) (Vector& dst, const Transform& t, const Vector& v) override;
-	DACOM_DEFMETHOD(inverse_rotate) (Vector& dst, const Transform& t, const Vector& v) override;
+	DEFMETHOD(rotate) (Vector& dst, const Transform& t, const Vector& v) override;
+	DEFMETHOD(inverse_rotate) (Vector& dst, const Transform& t, const Vector& v) override;
 
 	// Transform Vector with Transpose of Matrix. The transpose might also happen
 	// to be the inverse in the case of a rotation matrix.
 
-	DACOM_DEFMETHOD(transpose_transform) (Vector& dst, const Matrix& m, const Vector& v) override;
-	DACOM_DEFMETHOD(inverse_transform) (Vector& dst, const Transform& t, const Vector& v) override;
+	DEFMETHOD(transpose_transform) (Vector& dst, const Matrix& m, const Vector& v) override;
+	DEFMETHOD(inverse_transform) (Vector& dst, const Transform& t, const Vector& v) override;
 
 	// Same operations on lists of Vectors.
 
-	DACOM_DEFMETHOD(transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) override;
-	DACOM_DEFMETHOD(transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) override;
+	DEFMETHOD(transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) override;
+	DEFMETHOD(transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) override;
 
-	DACOM_DEFMETHOD(transpose_transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) override;
-	DACOM_DEFMETHOD(inverse_transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) override;
+	DEFMETHOD(transpose_transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) override;
+	DEFMETHOD(inverse_transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) override;
 
 	// Quaternion conversions.
 
-	DACOM_DEFMETHOD(matrix_to_quaternion) (Quaternion& dst, const Matrix& m) override;
-	DACOM_DEFMETHOD(quaternion_to_matrix) (Matrix& dst, const Quaternion& q) override;
+	DEFMETHOD(matrix_to_quaternion) (Quaternion& dst, const Matrix& m) override;
+	DEFMETHOD(quaternion_to_matrix) (Matrix& dst, const Quaternion& q) override;
 
 	// Quaternion operations.
 
-	DACOM_DEFMETHOD(transform) (Vector& dst, const Quaternion& q, const Vector& v) override;
-	DACOM_DEFMETHOD(mul) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2) override;
+	DEFMETHOD(transform) (Vector& dst, const Quaternion& q, const Vector& v) override;
+	DEFMETHOD(mul) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2) override;
 
 	// Quaternion interpolation.
 
-	DACOM_DEFMETHOD(quat_slerp) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2, SINGLE t) override;
+	DEFMETHOD(quat_slerp) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2, SINGLE t) override;
 
 	// Fast 1/sqrt(x) and sqrt(x)
 
-	DACOM_DEFMETHOD(InvSqrt) (SINGLE& dst, const SINGLE x) override;
-	DACOM_DEFMETHOD(Sqrt) (SINGLE& dst, const SINGLE x) override;
+	DEFMETHOD(InvSqrt) (SINGLE& dst, const SINGLE x) override;
+	DEFMETHOD(Sqrt) (SINGLE& dst, const SINGLE x) override;
 };
 
 /* ---------- prototypes */

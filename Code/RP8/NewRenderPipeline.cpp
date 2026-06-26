@@ -2141,144 +2141,144 @@ public:
 
 	// IDAComponent methods
 
-	DACOM_DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) override = 0;
-	DACOM_DEFMETHOD_(U32, AddRef)(void) override = 0;
-	DACOM_DEFMETHOD_(U32, Release)(void) override = 0;
+	DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) override = 0;
+	DEFMETHOD_(U32, AddRef)(void) override = 0;
+	DEFMETHOD_(U32, Release)(void) override = 0;
 
 	// IRenderPipeline8B methods
 
-	DACOM_DEFMETHOD(startup)(const char* profile_name) override;
-	DACOM_DEFMETHOD(shutdown)(void) override;
-	DACOM_DEFMETHOD(set_pipeline_state)(RPPIPELINESTATE state, U32 value) override;
-	DACOM_DEFMETHOD(get_pipeline_state)(RPPIPELINESTATE state, U32* value) override;
-	DACOM_DEFMETHOD(get_device_info)(RPDEVICEINFO* info) override;
-	DACOM_DEFMETHOD(query_device_ability)(RPDEVICEABILITY ability, U32* out_answer) override;
-	DACOM_DEFMETHOD(get_num_display_modes)(U32* count) override;
-	DACOM_DEFMETHOD(get_display_mode)(RPDISPLAYMODEINFO* mode, U32 mode_num) override;
-	DACOM_DEFMETHOD(select_mode)(RPBUFFERSINFO* mode, U32* adapter) override;
-	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) override;
-	DACOM_DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) override;
-	DACOM_DEFMETHOD(destroy_buffers)(void) override;
-	DACOM_DEFMETHOD(clear_buffers)(U32 rp_clear_flags, RECT* viewport_sub_rect) override;
-	DACOM_DEFMETHOD(swap_buffers)(void) override;
-	DACOM_DEFMETHOD(lock_buffer)(RPLOCKDATA* lockData) override;
-	DACOM_DEFMETHOD(unlock_buffer)(void) override;
-	DACOM_DEFMETHOD(get_buffer_interface)(const char* iid, void** out_iif) override;
-	DACOM_DEFMETHOD(get_device_stats)(RPDEVICESTATS* stat) override;
-	DACOM_DEFMETHOD(set_viewport)(int x, int y, int w, int h) override;
-	DACOM_DEFMETHOD(get_viewport)(int* out_x, int* out_y, int* out_w, int* out_h) override;
-	DACOM_DEFMETHOD(set_depth_range)(float lower_z_bound, float upper_z_bound) override;
-	DACOM_DEFMETHOD(get_depth_range)(float* lower_z_bound, float* upper_z_bound) override;
-	DACOM_DEFMETHOD(set_window)(HWND hwnd, int x, int y, int w, int h) override;
-	DACOM_DEFMETHOD(get_window)(HWND* out_hwnd, int* out_x, int* out_y, int* out_w, int* out_h) override;
-	DACOM_DEFMETHOD(set_world)(const Transform& world) override;
-	DACOM_DEFMETHOD(get_world)(Transform& world) override;
-	DACOM_DEFMETHOD(set_view)(const Transform& view) override;
-	DACOM_DEFMETHOD(get_view)(Transform& view) override;
-	DACOM_DEFMETHOD(set_modelview)(const Transform& modelview) override;
-	DACOM_DEFMETHOD(get_modelview)(Transform& modelview) override;
-	DACOM_DEFMETHOD(set_projection)(const Matrix4& projection) override;
-	DACOM_DEFMETHOD(get_projection)(Matrix4& projection) override;
-	DACOM_DEFMETHOD(set_lookat)(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz) override;
-	DACOM_DEFMETHOD(set_ortho)(float left, float right, float bottom, float top, float nearval, float farval) override;
-	DACOM_DEFMETHOD(set_perspective)(float fovy, float aspect, float znear, float zfar) override;
-	DACOM_DEFMETHOD(set_light)(IRP_LIGHTHANDLE handle, const D3DLIGHT8* light_values) override;
-	DACOM_DEFMETHOD(destroy_light)(IRP_LIGHTHANDLE handle) override;
-	DACOM_DEFMETHOD(get_light)(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values) override;
-	DACOM_DEFMETHOD(set_light_enable)(IRP_LIGHTHANDLE handle, U32 enable) override;
-	DACOM_DEFMETHOD(get_light_enable)(IRP_LIGHTHANDLE handle, U32* out_enable) override;
-	DACOM_DEFMETHOD(set_material)(D3DMATERIAL8* material_values) override;
-	DACOM_DEFMETHOD(get_material)(D3DMATERIAL8* out_material_values) override;
-	DACOM_DEFMETHOD(create_texture)(int width, int height, const PFenum* desiredformat, int num_lod, U32 irp_ctf_flags, IRP_TEXTUREHANDLE* out_htexture) override;
-	DACOM_DEFMETHOD(destroy_texture)(IRP_TEXTUREHANDLE htexture) override;
-	DACOM_DEFMETHOD(is_texture)(IRP_TEXTUREHANDLE htexture) override;
-	DACOM_DEFMETHOD(lock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface, RPLOCKDATA* lockData) override;
-	DACOM_DEFMETHOD(unlock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface) override;
-	DACOM_DEFMETHOD(get_texture_format)(IRP_TEXTUREHANDLE htexture, PFenum* out_pf) override;
-	DACOM_DEFMETHOD(get_texture_dim)(IRP_TEXTUREHANDLE htexture, U32* out_width, U32* out_height, U32* out_num_lod) override;
-	DACOM_DEFMETHOD(get_texture_interface)(IRP_TEXTUREHANDLE htexture, const char* iid, void** out_iif) override;
-	DACOM_DEFMETHOD(set_texture_level_data)(IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette) override;
-	DACOM_DEFMETHOD(blit_texture)(IRP_TEXTUREHANDLE hDest, U32 destLevel, RECT destRect, IRP_TEXTUREHANDLE hSrc, U32 srcLevel, RECT srcRect) override;
-	DACOM_DEFMETHOD(set_render_target)(UNKNOWN a2, UNKNOWN a3, UNKNOWN a4) override;
-	DACOM_DEFMETHOD(get_render_target)(void* a2) override;
-	DACOM_DEFMETHOD(begin_scene)(void) override;
-	DACOM_DEFMETHOD(end_scene)(void) override;
-	DACOM_DEFMETHOD(reset_render_states_to_defaults)(void) override;
-	DACOM_DEFMETHOD(set_render_state)(D3DRENDERSTATETYPE state, U32 value) override;
-	DACOM_DEFMETHOD(get_render_state)(D3DRENDERSTATETYPE state, U32* value) override;
-	DACOM_DEFMETHOD(set_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32 value) override;
-	DACOM_DEFMETHOD(get_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32* value) override;
-	DACOM_DEFMETHOD(set_texture_stage_transform)(U32 stage, Matrix4 const& mat4) override;
-	DACOM_DEFMETHOD(get_texture_stage_transform)(U32 stage, Matrix4& out_mat4) override;
-	DACOM_DEFMETHOD(set_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE htexture) override;
-	DACOM_DEFMETHOD(get_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE* out_htexture) override;
-	DACOM_DEFMETHOD(verify_state)(void) override;
-	DACOM_DEFMETHOD(draw_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, U32 flags) override;
-	DACOM_DEFMETHOD(draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) override;
-	DACOM_DEFMETHOD(draw_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, U32 flags) override;
-	DACOM_DEFMETHOD(draw_indexed_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) override;
-	DACOM_DEFMETHOD(add_light)(IRP_LIGHTHANDLE handle) override;
-	DACOM_DEFMETHOD(remove_light)(IRP_LIGHTHANDLE handle) override;
-	DACOM_DEFMETHOD(update_light)(IRP_LIGHTHANDLE handle) override;
-	DACOM_DEFMETHOD(set_world_n)(UNKNOWN a2, Transform* transform) override;
+	DEFMETHOD(startup)(const char* profile_name) override;
+	DEFMETHOD(shutdown)(void) override;
+	DEFMETHOD(set_pipeline_state)(RPPIPELINESTATE state, U32 value) override;
+	DEFMETHOD(get_pipeline_state)(RPPIPELINESTATE state, U32* value) override;
+	DEFMETHOD(get_device_info)(RPDEVICEINFO* info) override;
+	DEFMETHOD(query_device_ability)(RPDEVICEABILITY ability, U32* out_answer) override;
+	DEFMETHOD(get_num_display_modes)(U32* count) override;
+	DEFMETHOD(get_display_mode)(RPDISPLAYMODEINFO* mode, U32 mode_num) override;
+	DEFMETHOD(select_mode)(RPBUFFERSINFO* mode, U32* adapter) override;
+	DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) override;
+	DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) override;
+	DEFMETHOD(destroy_buffers)(void) override;
+	DEFMETHOD(clear_buffers)(U32 rp_clear_flags, RECT* viewport_sub_rect) override;
+	DEFMETHOD(swap_buffers)(void) override;
+	DEFMETHOD(lock_buffer)(RPLOCKDATA* lockData) override;
+	DEFMETHOD(unlock_buffer)(void) override;
+	DEFMETHOD(get_buffer_interface)(const char* iid, void** out_iif) override;
+	DEFMETHOD(get_device_stats)(RPDEVICESTATS* stat) override;
+	DEFMETHOD(set_viewport)(int x, int y, int w, int h) override;
+	DEFMETHOD(get_viewport)(int* out_x, int* out_y, int* out_w, int* out_h) override;
+	DEFMETHOD(set_depth_range)(float lower_z_bound, float upper_z_bound) override;
+	DEFMETHOD(get_depth_range)(float* lower_z_bound, float* upper_z_bound) override;
+	DEFMETHOD(set_window)(HWND hwnd, int x, int y, int w, int h) override;
+	DEFMETHOD(get_window)(HWND* out_hwnd, int* out_x, int* out_y, int* out_w, int* out_h) override;
+	DEFMETHOD(set_world)(const Transform& world) override;
+	DEFMETHOD(get_world)(Transform& world) override;
+	DEFMETHOD(set_view)(const Transform& view) override;
+	DEFMETHOD(get_view)(Transform& view) override;
+	DEFMETHOD(set_modelview)(const Transform& modelview) override;
+	DEFMETHOD(get_modelview)(Transform& modelview) override;
+	DEFMETHOD(set_projection)(const Matrix4& projection) override;
+	DEFMETHOD(get_projection)(Matrix4& projection) override;
+	DEFMETHOD(set_lookat)(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz) override;
+	DEFMETHOD(set_ortho)(float left, float right, float bottom, float top, float nearval, float farval) override;
+	DEFMETHOD(set_perspective)(float fovy, float aspect, float znear, float zfar) override;
+	DEFMETHOD(set_light)(IRP_LIGHTHANDLE handle, const D3DLIGHT8* light_values) override;
+	DEFMETHOD(destroy_light)(IRP_LIGHTHANDLE handle) override;
+	DEFMETHOD(get_light)(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values) override;
+	DEFMETHOD(set_light_enable)(IRP_LIGHTHANDLE handle, U32 enable) override;
+	DEFMETHOD(get_light_enable)(IRP_LIGHTHANDLE handle, U32* out_enable) override;
+	DEFMETHOD(set_material)(D3DMATERIAL8* material_values) override;
+	DEFMETHOD(get_material)(D3DMATERIAL8* out_material_values) override;
+	DEFMETHOD(create_texture)(int width, int height, const PFenum* desiredformat, int num_lod, U32 irp_ctf_flags, IRP_TEXTUREHANDLE* out_htexture) override;
+	DEFMETHOD(destroy_texture)(IRP_TEXTUREHANDLE htexture) override;
+	DEFMETHOD(is_texture)(IRP_TEXTUREHANDLE htexture) override;
+	DEFMETHOD(lock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface, RPLOCKDATA* lockData) override;
+	DEFMETHOD(unlock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface) override;
+	DEFMETHOD(get_texture_format)(IRP_TEXTUREHANDLE htexture, PFenum* out_pf) override;
+	DEFMETHOD(get_texture_dim)(IRP_TEXTUREHANDLE htexture, U32* out_width, U32* out_height, U32* out_num_lod) override;
+	DEFMETHOD(get_texture_interface)(IRP_TEXTUREHANDLE htexture, const char* iid, void** out_iif) override;
+	DEFMETHOD(set_texture_level_data)(IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette) override;
+	DEFMETHOD(blit_texture)(IRP_TEXTUREHANDLE hDest, U32 destLevel, RECT destRect, IRP_TEXTUREHANDLE hSrc, U32 srcLevel, RECT srcRect) override;
+	DEFMETHOD(set_render_target)(UNKNOWN a2, UNKNOWN a3, UNKNOWN a4) override;
+	DEFMETHOD(get_render_target)(void* a2) override;
+	DEFMETHOD(begin_scene)(void) override;
+	DEFMETHOD(end_scene)(void) override;
+	DEFMETHOD(reset_render_states_to_defaults)(void) override;
+	DEFMETHOD(set_render_state)(D3DRENDERSTATETYPE state, U32 value) override;
+	DEFMETHOD(get_render_state)(D3DRENDERSTATETYPE state, U32* value) override;
+	DEFMETHOD(set_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32 value) override;
+	DEFMETHOD(get_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32* value) override;
+	DEFMETHOD(set_texture_stage_transform)(U32 stage, Matrix4 const& mat4) override;
+	DEFMETHOD(get_texture_stage_transform)(U32 stage, Matrix4& out_mat4) override;
+	DEFMETHOD(set_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE htexture) override;
+	DEFMETHOD(get_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE* out_htexture) override;
+	DEFMETHOD(verify_state)(void) override;
+	DEFMETHOD(draw_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, U32 flags) override;
+	DEFMETHOD(draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) override;
+	DEFMETHOD(draw_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, U32 flags) override;
+	DEFMETHOD(draw_indexed_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) override;
+	DEFMETHOD(add_light)(IRP_LIGHTHANDLE handle) override;
+	DEFMETHOD(remove_light)(IRP_LIGHTHANDLE handle) override;
+	DEFMETHOD(update_light)(IRP_LIGHTHANDLE handle) override;
+	DEFMETHOD(set_world_n)(UNKNOWN a2, Transform* transform) override;
 
 	// IVertexBufferManager methods
 
-	DACOM_DEFMETHOD(initialize)(UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN) override;
-	DACOM_DEFMETHOD(cleanup)() override;
-	DACOM_DEFMETHOD(acquire_vertex_buffer)(D3DFORMAT vertex_format, U32 num_verts, VertexBufferAcquire* out_vbmem) override;
-	DACOM_DEFMETHOD(release_vertex_buffer)(VertexBufferAcquire* vbmem) override;
-	DACOM_DEFMETHOD(IVertexBufferManager_Unknown1C)() override;
-	DACOM_DEFMETHOD(copy_vertex_data)(void* dst_buffer, U32 dst_vertex_format, VertexBufferDesc* src_vb_desc, U32 start_vertex, U32 num_vertices) override;
+	DEFMETHOD(initialize)(UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN) override;
+	DEFMETHOD(cleanup)() override;
+	DEFMETHOD(acquire_vertex_buffer)(D3DFORMAT vertex_format, U32 num_verts, VertexBufferAcquire* out_vbmem) override;
+	DEFMETHOD(release_vertex_buffer)(VertexBufferAcquire* vbmem) override;
+	DEFMETHOD(IVertexBufferManager_Unknown1C)() override;
+	DEFMETHOD(copy_vertex_data)(void* dst_buffer, U32 dst_vertex_format, VertexBufferDesc* src_vb_desc, U32 start_vertex, U32 num_vertices) override;
 
 	// IRPDraw methods
 
-	DACOM_DEFMETHOD_(HRESULT, draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 min_index, U32 num_verts, U32 start_index, U32 count) override;
+	DEFMETHOD_(HRESULT, draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 min_index, U32 num_verts, U32 start_index, U32 count) override;
 
 	// IRPIndexBuffer methods
 
-	DACOM_DEFMETHOD(create_index_buffer)(U32 num_indices, IRP_INDEXBUFFERHANDLE* out_ib_handle, U8 irp_ibf_flags) override;
-	DACOM_DEFMETHOD(destroy_index_buffer)(IRP_INDEXBUFFERHANDLE* ib_handle) override;
-	DACOM_DEFMETHOD_(HRESULT, create_ib)(IRP_INDEXBUFFERHANDLE ib_handle, U32 num_indices) override;
-	DACOM_DEFMETHOD(copy_indices)(IRP_INDEXBUFFERHANDLE ib_handle, U32* start_index, U16 const* indices, U32 num_indices) override;
-	DACOM_DEFMETHOD(lock_ib)(IRP_INDEXBUFFERHANDLE ib_handle, U32* start_index, void*& out_data, U32 num_indices) override;
-	DACOM_DEFMETHOD(unlock_ib)(IRP_INDEXBUFFERHANDLE ib_handle) override;
-	DACOM_DEFMETHOD(select_ib)(IRP_INDEXBUFFERHANDLE ib_handle, U32 base_index, UNKNOWN a4, UNKNOWN a5) override;
-	DACOM_DEFMETHOD(get_ib_count)(IRP_INDEXBUFFERHANDLE ib_handle, U32* out_count) override;
-	DACOM_DEFMETHOD_(BOOL32, is_ib_valid)(IRP_INDEXBUFFERHANDLE ib_handle) override;
+	DEFMETHOD(create_index_buffer)(U32 num_indices, IRP_INDEXBUFFERHANDLE* out_ib_handle, U8 irp_ibf_flags) override;
+	DEFMETHOD(destroy_index_buffer)(IRP_INDEXBUFFERHANDLE* ib_handle) override;
+	DEFMETHOD_(HRESULT, create_ib)(IRP_INDEXBUFFERHANDLE ib_handle, U32 num_indices) override;
+	DEFMETHOD(copy_indices)(IRP_INDEXBUFFERHANDLE ib_handle, U32* start_index, U16 const* indices, U32 num_indices) override;
+	DEFMETHOD(lock_ib)(IRP_INDEXBUFFERHANDLE ib_handle, U32* start_index, void*& out_data, U32 num_indices) override;
+	DEFMETHOD(unlock_ib)(IRP_INDEXBUFFERHANDLE ib_handle) override;
+	DEFMETHOD(select_ib)(IRP_INDEXBUFFERHANDLE ib_handle, U32 base_index, UNKNOWN a4, UNKNOWN a5) override;
+	DEFMETHOD(get_ib_count)(IRP_INDEXBUFFERHANDLE ib_handle, U32* out_count) override;
+	DEFMETHOD_(BOOL32, is_ib_valid)(IRP_INDEXBUFFERHANDLE ib_handle) override;
 
 	// IRPVertexBuffer methods
 
-	DACOM_DEFMETHOD(create_vb)(U32 vertex_format, U32 num_verts, IRP_VERTEXBUFFERHANDLE* out_vb_handle, U8 irp_vbf_flags) override;
-	DACOM_DEFMETHOD(destroy_vb)(IRP_VERTEXBUFFERHANDLE& vb_handle) override;
-	DACOM_DEFMETHOD(ressize_vb)(IRP_VERTEXBUFFERHANDLE vb_handle, U32 format, U32 num_verts) override;
-	DACOM_DEFMETHOD(copy_vertices)(IRP_VERTEXBUFFERHANDLE vb_handle, U32* offset, VertexBufferDesc* src_vb_desc, U32 start_vertex, U32 num_vertices) override;
-	DACOM_DEFMETHOD(lock_vb)(IRP_VERTEXBUFFERHANDLE vb_handle, U32* start_index, void*& out_data, U32 num_verts) override;
-	DACOM_DEFMETHOD(unlock_vb)(IRP_VERTEXBUFFERHANDLE vb_handle) override;
-	DACOM_DEFMETHOD(RPVertexBuffer_Unknown24)(UNKNOWN) override;
-	DACOM_DEFMETHOD(select_vb)(IRP_VERTEXBUFFERHANDLE vb_handle) override;
-	DACOM_DEFMETHOD(get_vb_count)(IRP_VERTEXBUFFERHANDLE vb_handle, U32* out_vertex_format, U32* out_num_verts) override;
-	DACOM_DEFMETHOD_(BOOL32, is_vb_valid)(IRP_VERTEXBUFFERHANDLE vb_handle) override;
+	DEFMETHOD(create_vb)(U32 vertex_format, U32 num_verts, IRP_VERTEXBUFFERHANDLE* out_vb_handle, U8 irp_vbf_flags) override;
+	DEFMETHOD(destroy_vb)(IRP_VERTEXBUFFERHANDLE& vb_handle) override;
+	DEFMETHOD(ressize_vb)(IRP_VERTEXBUFFERHANDLE vb_handle, U32 format, U32 num_verts) override;
+	DEFMETHOD(copy_vertices)(IRP_VERTEXBUFFERHANDLE vb_handle, U32* offset, VertexBufferDesc* src_vb_desc, U32 start_vertex, U32 num_vertices) override;
+	DEFMETHOD(lock_vb)(IRP_VERTEXBUFFERHANDLE vb_handle, U32* start_index, void*& out_data, U32 num_verts) override;
+	DEFMETHOD(unlock_vb)(IRP_VERTEXBUFFERHANDLE vb_handle) override;
+	DEFMETHOD(RPVertexBuffer_Unknown24)(UNKNOWN) override;
+	DEFMETHOD(select_vb)(IRP_VERTEXBUFFERHANDLE vb_handle) override;
+	DEFMETHOD(get_vb_count)(IRP_VERTEXBUFFERHANDLE vb_handle, U32* out_vertex_format, U32* out_num_verts) override;
+	DEFMETHOD_(BOOL32, is_vb_valid)(IRP_VERTEXBUFFERHANDLE vb_handle) override;
 
 	// IGammaControl methods
 
-	DACOM_DEFMETHOD(set_gamma_function)(IGC_COMPONENT which, float display_gamma, float bias = 0.0, float slope = 1.0, float black_offset = 0.0) override;
-	DACOM_DEFMETHOD(set_gamma_ramp)(IGC_COMPONENT igc_component, U16* ramp) override;
-	DACOM_DEFMETHOD(get_gamma_ramp)(IGC_COMPONENT igc_component, U16* out_ramp) override;
-	DACOM_DEFMETHOD(set_calibration_enable)(bool enabled) override;
-	DACOM_DEFMETHOD(get_calibration_enable)(void) override;
+	DEFMETHOD(set_gamma_function)(IGC_COMPONENT which, float display_gamma, float bias = 0.0, float slope = 1.0, float black_offset = 0.0) override;
+	DEFMETHOD(set_gamma_ramp)(IGC_COMPONENT igc_component, U16* ramp) override;
+	DEFMETHOD(get_gamma_ramp)(IGC_COMPONENT igc_component, U16* out_ramp) override;
+	DEFMETHOD(set_calibration_enable)(bool enabled) override;
+	DEFMETHOD(get_calibration_enable)(void) override;
 
 	// IRPTexture methods
 
-	DACOM_DEFMETHOD(print_screen)(IFileSystem* IFS, const char* child) override;
-	DACOM_DEFMETHOD(load_texture)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture) override;
-	DACOM_DEFMETHOD(load_surface_from_file)(UNKNOWN* a2_interface, UNKNOWN a3, UNKNOWN a4, UNKNOWN a5) override;
-	DACOM_DEFMETHOD(load_dds_info)(DDSInfo* out_info, DWORD membytesize, void* mapped_file_mem) override;
-	DACOM_DEFMETHOD(load_cubemap)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture) override;
+	DEFMETHOD(print_screen)(IFileSystem* IFS, const char* child) override;
+	DEFMETHOD(load_texture)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture) override;
+	DEFMETHOD(load_surface_from_file)(UNKNOWN* a2_interface, UNKNOWN a3, UNKNOWN a4, UNKNOWN a5) override;
+	DEFMETHOD(load_dds_info)(DDSInfo* out_info, DWORD membytesize, void* mapped_file_mem) override;
+	DEFMETHOD(load_cubemap)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture) override;
 
 	// IAggregateComponent methods
 
-	DACOM_DEFMETHOD(Initialize) (void) override;
+	DEFMETHOD(Initialize) (void) override;
 
 private:
 	GENRESULT get_light_index(IRP_LIGHTHANDLE handle, U32* out_index) const;

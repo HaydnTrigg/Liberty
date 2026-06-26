@@ -150,120 +150,120 @@ struct DACOM_NO_VTABLE DOSFileSystem : public IFileSystem
 
 	// *** IComponentFactory methods ***
 
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
 
 	// *** IFileSystem methods ***
 
-	DACOM_DEFMETHOD_(BOOL, CloseHandle) (HANDLE handle = 0);
+	DEFMETHOD_(BOOL, CloseHandle) (HANDLE handle = 0);
 
-	DACOM_DEFMETHOD_(BOOL, ReadFile) (HANDLE hFileHandle, LPVOID lpBuffer, DWORD nNumberOfBytesToRead,
+	DEFMETHOD_(BOOL, ReadFile) (HANDLE hFileHandle, LPVOID lpBuffer, DWORD nNumberOfBytesToRead,
 		LPDWORD lpNumberOfBytesRead,
 		LPOVERLAPPED lpOverlapped);
 
-	DACOM_DEFMETHOD_(BOOL, WriteFile) (HANDLE hFileHandle, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
+	DEFMETHOD_(BOOL, WriteFile) (HANDLE hFileHandle, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
 		LPDWORD lpNumberOfBytesWritten, LPOVERLAPPED lpOverlapped);
 
-	DACOM_DEFMETHOD_(BOOL, GetOverlappedResult)   (HANDLE hFileHandle,
+	DEFMETHOD_(BOOL, GetOverlappedResult)   (HANDLE hFileHandle,
 		LPOVERLAPPED lpOverlapped,
 		LPDWORD lpNumberOfBytesTransferred,
 		BOOL bWait);
 
-	DACOM_DEFMETHOD_(DWORD, SetFilePointer) (HANDLE hFileHandle, LONG lDistanceToMove,
+	DEFMETHOD_(DWORD, SetFilePointer) (HANDLE hFileHandle, LONG lDistanceToMove,
 		PLONG lpDistanceToMoveHigh = 0, DWORD dwMoveMethod = FILE_BEGIN);
 
-	DACOM_DEFMETHOD_(BOOL, SetEndOfFile) (HANDLE hFileHandle = 0);
+	DEFMETHOD_(BOOL, SetEndOfFile) (HANDLE hFileHandle = 0);
 
-	DACOM_DEFMETHOD_(DWORD, GetFileSize) (HANDLE hFileHandle, LPDWORD lpFileSizeHigh = 0);
+	DEFMETHOD_(DWORD, GetFileSize) (HANDLE hFileHandle, LPDWORD lpFileSizeHigh = 0);
 
-	DACOM_DEFMETHOD_(BOOL, LockFile) (HANDLE hFile,
+	DEFMETHOD_(BOOL, LockFile) (HANDLE hFile,
 		DWORD dwFileOffsetLow,
 		DWORD dwFileOffsetHigh,
 		DWORD nNumberOfBytesToLockLow,
 		DWORD nNumberOfBytesToLockHigh);
 
-	DACOM_DEFMETHOD_(BOOL, UnlockFile) (HANDLE hFile,
+	DEFMETHOD_(BOOL, UnlockFile) (HANDLE hFile,
 		DWORD dwFileOffsetLow,
 		DWORD dwFileOffsetHigh,
 		DWORD nNumberOfBytesToUnlockLow,
 		DWORD nNumberOfBytesToUnlockHigh);
 
-	DACOM_DEFMETHOD_(BOOL, GetFileTime) (HANDLE hFileHandle, LPFILETIME lpCreationTime,
+	DEFMETHOD_(BOOL, GetFileTime) (HANDLE hFileHandle, LPFILETIME lpCreationTime,
 		LPFILETIME lpLastAccessTime, LPFILETIME lpLastWriteTime);
 
-	DACOM_DEFMETHOD_(BOOL, SetFileTime) (HANDLE hFileHandle, CONST FILETIME* lpCreationTime,
+	DEFMETHOD_(BOOL, SetFileTime) (HANDLE hFileHandle, CONST FILETIME* lpCreationTime,
 		CONST FILETIME* lpLastAccessTime,
 		CONST FILETIME* lpLastWriteTime);
 
-	DACOM_DEFMETHOD_(HANDLE, CreateFileMapping)   (HANDLE hFileHandle,
+	DEFMETHOD_(HANDLE, CreateFileMapping)   (HANDLE hFileHandle,
 		LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
 		DWORD flProtect,
 		DWORD dwMaximumSizeHigh,
 		DWORD dwMaximumSizeLow,
 		LPCTSTR lpName);
 
-	DACOM_DEFMETHOD_(LPVOID, MapViewOfFile)      (HANDLE hFileMappingObject,
+	DEFMETHOD_(LPVOID, MapViewOfFile)      (HANDLE hFileMappingObject,
 		DWORD dwDesiredAccess,
 		DWORD dwFileOffsetHigh,
 		DWORD dwFileOffsetLow,
 		DWORD dwNumberOfBytesToMap);
 
-	DACOM_DEFMETHOD_(BOOL, UnmapViewOfFile)      (LPCVOID lpBaseAddress);
+	DEFMETHOD_(BOOL, UnmapViewOfFile)      (LPCVOID lpBaseAddress);
 
-	DACOM_DEFMETHOD_(HANDLE, FindFirstFile) (LPCTSTR lpFileName, LPWIN32_FIND_DATA lpFindFileData);
+	DEFMETHOD_(HANDLE, FindFirstFile) (LPCTSTR lpFileName, LPWIN32_FIND_DATA lpFindFileData);
 
-	DACOM_DEFMETHOD_(BOOL, FindNextFile) (HANDLE hFindFile, LPWIN32_FIND_DATA lpFindFileData);
+	DEFMETHOD_(BOOL, FindNextFile) (HANDLE hFindFile, LPWIN32_FIND_DATA lpFindFileData);
 
-	DACOM_DEFMETHOD_(BOOL, FindClose) (HANDLE hFindFile);
+	DEFMETHOD_(BOOL, FindClose) (HANDLE hFindFile);
 
-	DACOM_DEFMETHOD_(BOOL, CreateDirectory) (LPCTSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+	DEFMETHOD_(BOOL, CreateDirectory) (LPCTSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
 
-	DACOM_DEFMETHOD_(BOOL, RemoveDirectory) (LPCTSTR lpPathName);
+	DEFMETHOD_(BOOL, RemoveDirectory) (LPCTSTR lpPathName);
 
-	DACOM_DEFMETHOD_(DWORD, GetCurrentDirectory) (DWORD nBufferLength, LPTSTR lpBuffer);
+	DEFMETHOD_(DWORD, GetCurrentDirectory) (DWORD nBufferLength, LPTSTR lpBuffer);
 
-	DACOM_DEFMETHOD_(BOOL, SetCurrentDirectory) (LPCTSTR lpPathName);
+	DEFMETHOD_(BOOL, SetCurrentDirectory) (LPCTSTR lpPathName);
 
-	DACOM_DEFMETHOD_(BOOL, DeleteFile)  (LPCTSTR lpFileName);
+	DEFMETHOD_(BOOL, DeleteFile)  (LPCTSTR lpFileName);
 
-	DACOM_DEFMETHOD_(BOOL, CopyFile)    (LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists);
+	DEFMETHOD_(BOOL, CopyFile)    (LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists);
 
-	DACOM_DEFMETHOD_(BOOL, MoveFile) (LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName);
+	DEFMETHOD_(BOOL, MoveFile) (LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName);
 
-	DACOM_DEFMETHOD_(DWORD, GetFileAttributes) (LPCTSTR lpFileName);
+	DEFMETHOD_(DWORD, GetFileAttributes) (LPCTSTR lpFileName);
 
-	DACOM_DEFMETHOD_(BOOL, SetFileAttributes) (LPCTSTR lpFileName, DWORD dwFileAttributes);
+	DEFMETHOD_(BOOL, SetFileAttributes) (LPCTSTR lpFileName, DWORD dwFileAttributes);
 
-	DACOM_DEFMETHOD_(DWORD, GetLastError) (VOID);
+	DEFMETHOD_(DWORD, GetLastError) (VOID);
 
 	//---------------   
 	// IFileSystem extensions to WIN32 system
 	//---------------   
 
-	DACOM_DEFMETHOD_(HANDLE, OpenChild) (DAFILEDESC* lpDesc);
+	DEFMETHOD_(HANDLE, OpenChild) (DAFILEDESC* lpDesc);
 
-	DACOM_DEFMETHOD_(DWORD, GetFilePosition) (HANDLE hFileHandle = 0, PLONG pPositionHigh = 0);
+	DEFMETHOD_(DWORD, GetFilePosition) (HANDLE hFileHandle = 0, PLONG pPositionHigh = 0);
 
-	DACOM_DEFMETHOD_(LONG, GetFileName) (LPSTR lpBuffer, LONG lBufferSize);
+	DEFMETHOD_(LONG, GetFileName) (LPSTR lpBuffer, LONG lBufferSize);
 
-	DACOM_DEFMETHOD_(DWORD, GetAccessType) (VOID);
+	DEFMETHOD_(DWORD, GetAccessType) (VOID);
 
-	DACOM_DEFMETHOD(GetParentSystem) (LPFILESYSTEM* lplpFileSystem);
+	DEFMETHOD(GetParentSystem) (LPFILESYSTEM* lplpFileSystem);
 
-	DACOM_DEFMETHOD(SetPreference)  (DWORD dwNumber, DWORD  dwValue);
+	DEFMETHOD(SetPreference)  (DWORD dwNumber, DWORD  dwValue);
 
-	DACOM_DEFMETHOD(GetPreference)  (DWORD dwNumber, PDWORD pdwValue);
+	DEFMETHOD(GetPreference)  (DWORD dwNumber, PDWORD pdwValue);
 
-	DACOM_DEFMETHOD(ReadDirectoryExtension) (HANDLE hFile, LPVOID lpBuffer,
+	DEFMETHOD(ReadDirectoryExtension) (HANDLE hFile, LPVOID lpBuffer,
 		DWORD nNumberOfBytesToRead,
 		LPDWORD lpNumberOfBytesRead = 0, DWORD dwStartOffset = 0);
 
-	DACOM_DEFMETHOD(WriteDirectoryExtension) (HANDLE hFile, LPCVOID lpBuffer,
+	DEFMETHOD(WriteDirectoryExtension) (HANDLE hFile, LPCVOID lpBuffer,
 		DWORD nNumberOfBytesToWrite,
 		LPDWORD lpNumberOfBytesWritten = 0, DWORD dwStartOffset = 0);
 
-	DACOM_DEFMETHOD_(LONG, SerialCall) (LPFILESYSTEM lpSystem, DAFILE_SERIAL_PROC lpProc, VOID* lpContext);
+	DEFMETHOD_(LONG, SerialCall) (LPFILESYSTEM lpSystem, DAFILE_SERIAL_PROC lpProc, VOID* lpContext);
 
-	DACOM_DEFMETHOD_(BOOL, GetAbsolutePath) (char* lpOutput, LPCTSTR lpInput, LONG lSize);
+	DEFMETHOD_(BOOL, GetAbsolutePath) (char* lpOutput, LPCTSTR lpInput, LONG lSize);
 
 	//---------------   
 	// DOSFileSystem methods

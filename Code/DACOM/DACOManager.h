@@ -47,23 +47,23 @@ struct DACOManager : public ICOManager, public ICOManagerLiberty
 
 	// IDAComponent methods
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance) override;
-	DACOM_DEFMETHOD_(U32, AddRef) (void) override;
-	DACOM_DEFMETHOD_(U32, Release) (void) override;
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance) override;
+	DEFMETHOD_(U32, AddRef) (void) override;
+	DEFMETHOD_(U32, Release) (void) override;
 
 	// IComponentFactory methods
 
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance) override;
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance) override;
 
 	// IDACOManager methods
 
-	DACOM_DEFMETHOD(RegisterComponent)	 (IComponentFactory* component, const C8* interface_name, U32 priority = DACOM_NORMAL_PRIORITY) override;
-	DACOM_DEFMETHOD(UnregisterComponent) (IComponentFactory* component, const C8* interface_name = NULL) override;
-	DACOM_DEFMETHOD(EnumerateComponents) (const C8* interface_name, DACOMENUMCALLBACK callback, void* context = NULL) override;
-	DACOM_DEFMETHOD(AddLibrary) (const C8* DLL_filename) override;
-	DACOM_DEFMETHOD(RemoveLibrary) (const C8* DLL_filename) override;
-	DACOM_DEFMETHOD(ShutDown) (void) override;
-	DACOM_DEFMETHOD(SetINIConfig) (const C8* info, U32 flags = 0) override;
+	DEFMETHOD(RegisterComponent)	 (IComponentFactory* component, const C8* interface_name, U32 priority = DACOM_NORMAL_PRIORITY) override;
+	DEFMETHOD(UnregisterComponent) (IComponentFactory* component, const C8* interface_name = NULL) override;
+	DEFMETHOD(EnumerateComponents) (const C8* interface_name, DACOMENUMCALLBACK callback, void* context = NULL) override;
+	DEFMETHOD(AddLibrary) (const C8* DLL_filename) override;
+	DEFMETHOD(RemoveLibrary) (const C8* DLL_filename) override;
+	DEFMETHOD(ShutDown) (void) override;
+	DEFMETHOD(SetINIConfig) (const C8* info, U32 flags = 0) override;
 
 	BOOL32 LoadAllFromDirectory(const C8* pathName, const C8* searchName);
 	void LoadAllFromPath(const C8* searchName);
@@ -81,5 +81,5 @@ struct DACOManager : public ICOManager, public ICOManagerLiberty
 
 	// ICOManagerLiberty methods
 
-	DACOM_DEFMETHOD(CreateInstanceEx) (DACOMDESC* descriptor, void** instance, U32 low_priority, U32 high_priority) override;
+	DEFMETHOD(CreateInstanceEx) (DACOMDESC* descriptor, void** instance, U32 low_priority, U32 high_priority) override;
 };

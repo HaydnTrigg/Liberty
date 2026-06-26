@@ -29,13 +29,13 @@ typedef BOOL32(__cdecl* DACOMENUMCALLBACK)(IComponentFactory* component,
 DACOM_INTERFACE(ICOManager, IID_ICOManager);
 struct DACOM_NO_VTABLE ICOManager : public IComponentFactory
 {
-	DACOM_DEFMETHOD(RegisterComponent)	 (IComponentFactory* component, const C8* interface_name, U32 priority = DACOM_NORMAL_PRIORITY) = 0;
-	DACOM_DEFMETHOD(UnregisterComponent) (IComponentFactory* component, const C8* interface_name = 0) = 0;
-	DACOM_DEFMETHOD(EnumerateComponents) (const C8* interface_name, DACOMENUMCALLBACK callback, void* context = 0) = 0;
-	DACOM_DEFMETHOD(AddLibrary) (const C8* DLL_filename) = 0;
-	DACOM_DEFMETHOD(RemoveLibrary) (const C8* DLL_filename) = 0;
-	DACOM_DEFMETHOD(ShutDown) (void) = 0;
-	DACOM_DEFMETHOD(SetINIConfig) (const C8* info, U32 flags = 0) = 0;
+	DEFMETHOD(RegisterComponent)	 (IComponentFactory* component, const C8* interface_name, U32 priority = DACOM_NORMAL_PRIORITY) = 0;
+	DEFMETHOD(UnregisterComponent) (IComponentFactory* component, const C8* interface_name = 0) = 0;
+	DEFMETHOD(EnumerateComponents) (const C8* interface_name, DACOMENUMCALLBACK callback, void* context = 0) = 0;
+	DEFMETHOD(AddLibrary) (const C8* DLL_filename) = 0;
+	DEFMETHOD(RemoveLibrary) (const C8* DLL_filename) = 0;
+	DEFMETHOD(ShutDown) (void) = 0;
+	DEFMETHOD(SetINIConfig) (const C8* info, U32 flags = 0) = 0;
 };
 
 // Extensions for peeking into the internals of ICOManager
@@ -43,5 +43,5 @@ struct DACOM_NO_VTABLE ICOManager : public IComponentFactory
 DACOM_INTERFACE(ICOManagerLiberty, IID_ICOManagerLiberty);
 struct DACOM_NO_VTABLE ICOManagerLiberty
 {
-	DACOM_DEFMETHOD(CreateInstanceEx) (DACOMDESC* descriptor, void** instance, U32 low_priority, U32 high_priority) = 0;
+	DEFMETHOD(CreateInstanceEx) (DACOMDESC* descriptor, void** instance, U32 low_priority, U32 high_priority) = 0;
 };

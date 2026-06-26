@@ -33,11 +33,11 @@ DACOM_INTERFACE(IDAConnectionPoint, IID_IDAConnectionPoint);
 
 struct DACOM_NO_VTABLE IDAConnectionPoint : public IDAComponent
 {
-	DACOM_DEFMETHOD_(U32, GetOutgoingInterface) (C8* interfaceName, U32 bufferLength) = 0;
-	DACOM_DEFMETHOD(GetContainer) (IDAConnectionPointContainer** container) = 0;
-	DACOM_DEFMETHOD(Advise) (IDAComponent* component, U32* handle) = 0;
-	DACOM_DEFMETHOD(Unadvise) (U32 handle) = 0;
-	DACOM_DEFMETHOD_(BOOL32, EnumerateConnections) (CONNECTION_ENUM_PROC proc, void* context = 0) = 0;
+	DEFMETHOD_(U32, GetOutgoingInterface) (C8* interfaceName, U32 bufferLength) = 0;
+	DEFMETHOD(GetContainer) (IDAConnectionPointContainer** container) = 0;
+	DEFMETHOD(Advise) (IDAComponent* component, U32* handle) = 0;
+	DEFMETHOD(Unadvise) (U32 handle) = 0;
+	DEFMETHOD_(BOOL32, EnumerateConnections) (CONNECTION_ENUM_PROC proc, void* context = 0) = 0;
 };
 
 /*
@@ -49,8 +49,8 @@ DACOM_INTERFACE(IDAConnectionPointContainer, IID_IDAConnectionPointContainer);
 
 struct DACOM_NO_VTABLE IDAConnectionPointContainer : public IDAComponent
 {
-	DACOM_DEFMETHOD(FindConnectionPoint) (const C8* connectionName, struct IDAConnectionPoint** connPoint) = 0;
-	DACOM_DEFMETHOD_(BOOL32, EnumerateConnectionPoints) (CONNCONTAINER_ENUM_PROC proc, void* context = 0) = 0;
+	DEFMETHOD(FindConnectionPoint) (const C8* connectionName, struct IDAConnectionPoint** connPoint) = 0;
+	DEFMETHOD_(BOOL32, EnumerateConnectionPoints) (CONNCONTAINER_ENUM_PROC proc, void* context = 0) = 0;
 };
 
 #endif // ICONNECTION_H

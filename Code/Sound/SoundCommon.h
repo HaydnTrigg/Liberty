@@ -28,29 +28,29 @@ struct DACOM_NO_VTABLE SoundCommon : ISoundCommon, IAggregateComponent
 
 	// *** ISoundCommon methods ***
 
-	DACOM_DEFMETHOD_(BOOL32, Startup) () override;
-	DACOM_DEFMETHOD_(void, Shutdown) () override;
-	DACOM_DEFMETHOD_(U32, GetOutputChannels) () override;
+	DEFMETHOD_(BOOL32, Startup) () override;
+	DEFMETHOD_(void, Shutdown) () override;
+	DEFMETHOD_(U32, GetOutputChannels) () override;
 
-	DACOM_DEFMETHOD_(HSOUNDVOICE, CreateVoice) (const WAVEFORMATEX* format) override;
-	DACOM_DEFMETHOD_(void, DestroyVoice) (HSOUNDVOICE voice) override;
+	DEFMETHOD_(HSOUNDVOICE, CreateVoice) (const WAVEFORMATEX* format) override;
+	DEFMETHOD_(void, DestroyVoice) (HSOUNDVOICE voice) override;
 
-	DACOM_DEFMETHOD_(BOOL32, SubmitBuffer) (HSOUNDVOICE voice, const SOUND_BUFFER* buffer) override;
-	DACOM_DEFMETHOD_(void, Start) (HSOUNDVOICE voice) override;
-	DACOM_DEFMETHOD_(void, Stop) (HSOUNDVOICE voice) override;
-	DACOM_DEFMETHOD_(void, Flush) (HSOUNDVOICE voice) override;
-	DACOM_DEFMETHOD_(U32, GetBuffersQueued) (HSOUNDVOICE voice) override;
+	DEFMETHOD_(BOOL32, SubmitBuffer) (HSOUNDVOICE voice, const SOUND_BUFFER* buffer) override;
+	DEFMETHOD_(void, Start) (HSOUNDVOICE voice) override;
+	DEFMETHOD_(void, Stop) (HSOUNDVOICE voice) override;
+	DEFMETHOD_(void, Flush) (HSOUNDVOICE voice) override;
+	DEFMETHOD_(U32, GetBuffersQueued) (HSOUNDVOICE voice) override;
 
-	DACOM_DEFMETHOD_(void, SetVolume) (HSOUNDVOICE voice, S32 centibels) override;
-	DACOM_DEFMETHOD_(void, SetFrequencyRatio) (HSOUNDVOICE voice, SINGLE ratio) override;
-	DACOM_DEFMETHOD_(void, SetPan) (HSOUNDVOICE voice, S32 panCentibels, U32 sourceChannels, SINGLE reverbSend) override;
-	DACOM_DEFMETHOD_(void, Apply3D) (HSOUNDVOICE voice, const SOUND_LISTENER* listener, const SOUND_EMITTER* emitter, SINGLE frequencyRatio, SINGLE reverbSend) override;
+	DEFMETHOD_(void, SetVolume) (HSOUNDVOICE voice, S32 centibels) override;
+	DEFMETHOD_(void, SetFrequencyRatio) (HSOUNDVOICE voice, SINGLE ratio) override;
+	DEFMETHOD_(void, SetPan) (HSOUNDVOICE voice, S32 panCentibels, U32 sourceChannels, SINGLE reverbSend) override;
+	DEFMETHOD_(void, Apply3D) (HSOUNDVOICE voice, const SOUND_LISTENER* listener, const SOUND_EMITTER* emitter, SINGLE frequencyRatio, SINGLE reverbSend) override;
 
-	DACOM_DEFMETHOD_(void, SetReverb) (U32 environment, SINGLE volume, SINGLE decayScale, SINGLE damping) override;
+	DEFMETHOD_(void, SetReverb) (U32 environment, SINGLE volume, SINGLE decayScale, SINGLE damping) override;
 
 	// *** IAggregateComponent methods ***
 
-	DACOM_DEFMETHOD(Initialize) (void) override;
+	DEFMETHOD(Initialize) (void) override;
 
 	// Called by the DACOM factory immediately after construction.
 	GENRESULT init(AGGDESC* desc);

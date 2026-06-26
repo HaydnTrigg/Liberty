@@ -111,42 +111,42 @@ struct DACOM_NO_VTABLE ISoundCommon : public IDAComponent
 	 * Starts (or, on later calls, references) the shared audio engine. Returns
 	 * TRUE if the engine is running on return.
 	 */
-	DACOM_DEFMETHOD_(BOOL32, Startup) () = 0;
+	DEFMETHOD_(BOOL32, Startup) () = 0;
 
 	/*
 	 * Releases this consumer's reference to the engine. The engine is destroyed
 	 * once the last reference is released.
 	 */
-	DACOM_DEFMETHOD_(void, Shutdown) () = 0;
+	DEFMETHOD_(void, Shutdown) () = 0;
 
 	// Returns the number of output channels on the device (valid after Startup()).
-	DACOM_DEFMETHOD_(U32, GetOutputChannels) () = 0;
+	DEFMETHOD_(U32, GetOutputChannels) () = 0;
 
 	// Creates a voice for the given PCM format. Returns null on failure.
-	DACOM_DEFMETHOD_(HSOUNDVOICE, CreateVoice) (const WAVEFORMATEX* format) = 0;
+	DEFMETHOD_(HSOUNDVOICE, CreateVoice) (const WAVEFORMATEX* format) = 0;
 
 	// Stops and destroys a voice created by CreateVoice().
-	DACOM_DEFMETHOD_(void, DestroyVoice) (HSOUNDVOICE voice) = 0;
+	DEFMETHOD_(void, DestroyVoice) (HSOUNDVOICE voice) = 0;
 
 	// Queues a buffer of PCM on a voice. Returns TRUE on success.
-	DACOM_DEFMETHOD_(BOOL32, SubmitBuffer) (HSOUNDVOICE voice, const SOUND_BUFFER* buffer) = 0;
+	DEFMETHOD_(BOOL32, SubmitBuffer) (HSOUNDVOICE voice, const SOUND_BUFFER* buffer) = 0;
 
 	// Playback control for a single voice.
-	DACOM_DEFMETHOD_(void, Start) (HSOUNDVOICE voice) = 0;
-	DACOM_DEFMETHOD_(void, Stop) (HSOUNDVOICE voice) = 0;
-	DACOM_DEFMETHOD_(void, Flush) (HSOUNDVOICE voice) = 0;
+	DEFMETHOD_(void, Start) (HSOUNDVOICE voice) = 0;
+	DEFMETHOD_(void, Stop) (HSOUNDVOICE voice) = 0;
+	DEFMETHOD_(void, Flush) (HSOUNDVOICE voice) = 0;
 
 	// Returns the number of buffers still queued on a voice.
-	DACOM_DEFMETHOD_(U32, GetBuffersQueued) (HSOUNDVOICE voice) = 0;
+	DEFMETHOD_(U32, GetBuffersQueued) (HSOUNDVOICE voice) = 0;
 
 	/*
 	 * Sets the per-voice volume, in hundredths of a decibel of attenuation
 	 * (DirectSound convention: 0 = full volume, -10000 = silence).
 	 */
-	DACOM_DEFMETHOD_(void, SetVolume) (HSOUNDVOICE voice, S32 centibels) = 0;
+	DEFMETHOD_(void, SetVolume) (HSOUNDVOICE voice, S32 centibels) = 0;
 
 	// Sets the per-voice pitch, as a multiplier of the source sample rate (1.0 = normal).
-	DACOM_DEFMETHOD_(void, SetFrequencyRatio) (HSOUNDVOICE voice, SINGLE ratio) = 0;
+	DEFMETHOD_(void, SetFrequencyRatio) (HSOUNDVOICE voice, SINGLE ratio) = 0;
 
 	/*
 	 * Sets the per-voice stereo pan and reverb send. 'panCentibels' follows the
@@ -154,7 +154,7 @@ struct DACOM_NO_VTABLE ISoundCommon : public IDAComponent
 	 * right), 'sourceChannels' is the voice's channel count, and 'reverbSend'
 	 * is the wet level in the range 0..1.
 	 */
-	DACOM_DEFMETHOD_(void, SetPan) (HSOUNDVOICE voice, S32 panCentibels, U32 sourceChannels, SINGLE reverbSend) = 0;
+	DEFMETHOD_(void, SetPan) (HSOUNDVOICE voice, S32 panCentibels, U32 sourceChannels, SINGLE reverbSend) = 0;
 
 	/*
 	 * Computes and applies a 3D solution (panning, attenuation and Doppler) to a
@@ -162,7 +162,7 @@ struct DACOM_NO_VTABLE ISoundCommon : public IDAComponent
 	 * pitch the Doppler factor is multiplied into; 'reverbSend' scales the
 	 * computed reverb level (0..1).
 	 */
-	DACOM_DEFMETHOD_(void, Apply3D) (HSOUNDVOICE voice, const SOUND_LISTENER* listener, const SOUND_EMITTER* emitter, SINGLE frequencyRatio, SINGLE reverbSend) = 0;
+	DEFMETHOD_(void, Apply3D) (HSOUNDVOICE voice, const SOUND_LISTENER* listener, const SOUND_EMITTER* emitter, SINGLE frequencyRatio, SINGLE reverbSend) = 0;
 
 	/*
 	 * Configures the environmental reverb shared by all voices. 'environment' is
@@ -170,7 +170,7 @@ struct DACOM_NO_VTABLE ISoundCommon : public IDAComponent
 	 * 'decayScale' scales the decay time, and 'damping' (0..2) the
 	 * high-frequency absorption.
 	 */
-	DACOM_DEFMETHOD_(void, SetReverb) (U32 environment, SINGLE volume, SINGLE decayScale, SINGLE damping) = 0;
+	DEFMETHOD_(void, SetReverb) (U32 environment, SINGLE volume, SINGLE decayScale, SINGLE damping) = 0;
 };
 
 #endif // ISOUNDCOMMON_H

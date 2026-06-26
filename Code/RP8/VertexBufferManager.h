@@ -26,18 +26,18 @@ struct DACOM_NO_VTABLE IVertexBufferManager : public IDAComponent
 {
 	// IDAComponent methods
 
-	DACOM_DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
-	DACOM_DEFMETHOD_(U32, AddRef)(void) = 0;
-	DACOM_DEFMETHOD_(U32, Release)(void) = 0;
+	DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
+	DEFMETHOD_(U32, AddRef)(void) = 0;
+	DEFMETHOD_(U32, Release)(void) = 0;
 
 	// IVertexBufferManager methods
 
-	DACOM_DEFMETHOD(initialize)(UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN) = 0;
-	DACOM_DEFMETHOD(cleanup)() = 0;
-	DACOM_DEFMETHOD(acquire_vertex_buffer)(D3DFORMAT vertex_format, U32 num_verts, VertexBufferAcquire* out_vbmem) = 0;
-	DACOM_DEFMETHOD(release_vertex_buffer)(VertexBufferAcquire* vbmem) = 0;
-	DACOM_DEFMETHOD(IVertexBufferManager_Unknown1C)() = 0;
-	DACOM_DEFMETHOD(copy_vertex_data)(void* dst_buffer, U32 dst_vertex_format, VertexBufferDesc* src_vb_desc, U32 start_vertex, U32 num_vertices) = 0;
+	DEFMETHOD(initialize)(UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN) = 0;
+	DEFMETHOD(cleanup)() = 0;
+	DEFMETHOD(acquire_vertex_buffer)(D3DFORMAT vertex_format, U32 num_verts, VertexBufferAcquire* out_vbmem) = 0;
+	DEFMETHOD(release_vertex_buffer)(VertexBufferAcquire* vbmem) = 0;
+	DEFMETHOD(IVertexBufferManager_Unknown1C)() = 0;
+	DEFMETHOD(copy_vertex_data)(void* dst_buffer, U32 dst_vertex_format, VertexBufferDesc* src_vb_desc, U32 start_vertex, U32 num_vertices) = 0;
 };
 
 #endif

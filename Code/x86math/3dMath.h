@@ -55,63 +55,63 @@ struct I3DMathEngine : public IDAComponent
 {
 	// Matrix and Transform operations.
 
-	DACOM_DEFMETHOD(inverse) (Matrix& dst, const Matrix& m) = 0;
-	DACOM_DEFMETHOD(scale) (Matrix& dst, const Matrix& m, SINGLE s) = 0;
+	DEFMETHOD(inverse) (Matrix& dst, const Matrix& m) = 0;
+	DEFMETHOD(scale) (Matrix& dst, const Matrix& m, SINGLE s) = 0;
 
 	// Determinant of matrix.
 
-	DACOM_DEFMETHOD_(SINGLE, det) (const Matrix& m) = 0;
+	DEFMETHOD_(SINGLE, det) (const Matrix& m) = 0;
 
 	// Matrix and Transform concatenation.
 
-	DACOM_DEFMETHOD(mul) (Matrix& dst, const Matrix& m1, const Matrix& m2) = 0;
+	DEFMETHOD(mul) (Matrix& dst, const Matrix& m1, const Matrix& m2) = 0;
 	// Matrix and Transform concatenation.
 
-	DACOM_DEFMETHOD(mul) (Transform& dst, const Transform& m1, const Transform& m2) = 0;
+	DEFMETHOD(mul) (Transform& dst, const Transform& m1, const Transform& m2) = 0;
 
 	// Matrix and Transform operation on Vectors.
 
-	DACOM_DEFMETHOD(transform) (Vector& dst, const Matrix& m, const Vector& v) = 0;
+	DEFMETHOD(transform) (Vector& dst, const Matrix& m, const Vector& v) = 0;
 	// Matrix and Transform operation on Vectors.
 
-	DACOM_DEFMETHOD(transform) (Vector& dst, const Transform& t, const Vector& v) = 0;
+	DEFMETHOD(transform) (Vector& dst, const Transform& t, const Vector& v) = 0;
 
 	// rotate with no translation.
 
-	DACOM_DEFMETHOD(rotate) (Vector& dst, const Transform& t, const Vector& v) = 0;
-	DACOM_DEFMETHOD(inverse_rotate) (Vector& dst, const Transform& t, const Vector& v) = 0;
+	DEFMETHOD(rotate) (Vector& dst, const Transform& t, const Vector& v) = 0;
+	DEFMETHOD(inverse_rotate) (Vector& dst, const Transform& t, const Vector& v) = 0;
 
 	// Transform Vector with Transpose of Matrix. The transpose might also happen
 	// to be the inverse in the case of a rotation matrix.
 
-	DACOM_DEFMETHOD(transpose_transform) (Vector& dst, const Matrix& m, const Vector& v) = 0;
-	DACOM_DEFMETHOD(inverse_transform) (Vector& dst, const Transform& t, const Vector& v) = 0;
+	DEFMETHOD(transpose_transform) (Vector& dst, const Matrix& m, const Vector& v) = 0;
+	DEFMETHOD(inverse_transform) (Vector& dst, const Transform& t, const Vector& v) = 0;
 
 	// Same operations on lists of Vectors.
 
-	DACOM_DEFMETHOD(transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) = 0;
-	DACOM_DEFMETHOD(transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) = 0;
+	DEFMETHOD(transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) = 0;
+	DEFMETHOD(transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) = 0;
 
-	DACOM_DEFMETHOD(transpose_transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) = 0;
-	DACOM_DEFMETHOD(inverse_transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) = 0;
+	DEFMETHOD(transpose_transform_list) (Vector* dst, const Matrix& m, const Vector* src, int n) = 0;
+	DEFMETHOD(inverse_transform_list) (Vector* dst, const Transform& t, const Vector* src, int n) = 0;
 
 	// Quaternion conversions.
 
-	DACOM_DEFMETHOD(matrix_to_quaternion) (Quaternion& dst, const Matrix& m) = 0;
-	DACOM_DEFMETHOD(quaternion_to_matrix) (Matrix& dst, const Quaternion& q) = 0;
+	DEFMETHOD(matrix_to_quaternion) (Quaternion& dst, const Matrix& m) = 0;
+	DEFMETHOD(quaternion_to_matrix) (Matrix& dst, const Quaternion& q) = 0;
 
 	// Quaternion operations.
 
-	DACOM_DEFMETHOD(transform) (Vector& dst, const Quaternion& q, const Vector& v) = 0;
-	DACOM_DEFMETHOD(mul) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2) = 0;
+	DEFMETHOD(transform) (Vector& dst, const Quaternion& q, const Vector& v) = 0;
+	DEFMETHOD(mul) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2) = 0;
 
 	// Quaternion interpolation.
 
-	DACOM_DEFMETHOD(quat_slerp) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2, SINGLE t) = 0;
+	DEFMETHOD(quat_slerp) (Quaternion& dst, const Quaternion& q1, const Quaternion& q2, SINGLE t) = 0;
 
-	DACOM_DEFMETHOD(general_inverse) (Transform& dst, SINGLE& w, const Transform& m) = 0;
-	DACOM_DEFMETHOD(InvSqrt) (SINGLE& dst, const SINGLE x) = 0;
-	DACOM_DEFMETHOD(Sqrt) (SINGLE& dst, const SINGLE x) = 0;
+	DEFMETHOD(general_inverse) (Transform& dst, SINGLE& w, const Transform& m) = 0;
+	DEFMETHOD(InvSqrt) (SINGLE& dst, const SINGLE x) = 0;
+	DEFMETHOD(Sqrt) (SINGLE& dst, const SINGLE x) = 0;
 };
 
 /* ---------- prototypes */

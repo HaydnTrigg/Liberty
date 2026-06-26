@@ -18,13 +18,13 @@ struct DACOM_NO_VTABLE IRPDraw : public IDAComponent
 {
 	// IDAComponent methods
 
-	DACOM_DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
-	DACOM_DEFMETHOD_(U32, AddRef)(void) = 0;
-	DACOM_DEFMETHOD_(U32, Release)(void) = 0;
+	DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
+	DEFMETHOD_(U32, AddRef)(void) = 0;
+	DEFMETHOD_(U32, Release)(void) = 0;
 
 	// IRPDraw methods
 
-	DACOM_DEFMETHOD_(HRESULT, draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 min_index, U32 num_verts, U32 start_index, U32 count);
+	DEFMETHOD_(HRESULT, draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 min_index, U32 num_verts, U32 start_index, U32 count);
 };
 
 #endif

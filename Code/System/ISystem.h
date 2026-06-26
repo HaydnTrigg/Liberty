@@ -27,7 +27,7 @@ DACOM_INTERFACE(ISystemComponent, IID_ISystemComponent);
 
 struct DACOM_NO_VTABLE ISystemComponent : public IAggregateComponent
 {
-	DACOM_DEFMETHOD_(void, Update) (void) = 0;
+	DEFMETHOD_(void, Update) (void) = 0;
 };
 
 /*
@@ -39,9 +39,9 @@ DACOM_INTERFACE(ISystemContainer, IID_ISystemContainer);
 
 struct DACOM_NO_VTABLE ISystemContainer : public ISystemComponent
 {
-	DACOM_DEFMETHOD(LoadSystemComponents) (void) = 0;
-	DACOM_DEFMETHOD(Shutdown) (void) = 0;
-	DACOM_DEFMETHOD(AddComponent) (const AGGDESC* descriptor) = 0;
+	DEFMETHOD(LoadSystemComponents) (void) = 0;
+	DEFMETHOD(Shutdown) (void) = 0;
+	DEFMETHOD(AddComponent) (const AGGDESC* descriptor) = 0;
 };
 
 /*

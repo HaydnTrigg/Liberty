@@ -6,8 +6,8 @@
 #define DACOM_DEC __declspec(dllimport)
 #endif
 #define DACOM_API __stdcall
-#define DACOM_DEFMETHOD(method) virtual GENRESULT DACOM_API method
-#define DACOM_DEFMETHOD_(type, method) virtual type DACOM_API method
+#define DEFMETHOD(method) virtual GENRESULT DACOM_API method
+#define DEFMETHOD_(type, method) virtual type DACOM_API method
 #define DACOM_NO_VTABLE __declspec(novtable)
 //#define DACOM_MAKE_IID(name, ver) name "__" #ver
 #define DACOM_MAKE_IID(name) DA_XSTR(LIB_MAJOR) "." DA_XSTR(LIB_MINOR) "_" name

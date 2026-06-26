@@ -31,17 +31,17 @@ struct DACOM_NO_VTABLE IRPTexture : public IDAComponent
 {
 	// IDAComponent methods
 
-	DACOM_DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
-	DACOM_DEFMETHOD_(U32, AddRef)(void) = 0;
-	DACOM_DEFMETHOD_(U32, Release)(void) = 0;
+	DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
+	DEFMETHOD_(U32, AddRef)(void) = 0;
+	DEFMETHOD_(U32, Release)(void) = 0;
 
 	// IRPTexture methods
 
-	DACOM_DEFMETHOD(print_screen)(IFileSystem* IFS, const char* child);
-	DACOM_DEFMETHOD(load_texture)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture);
-	DACOM_DEFMETHOD(load_surface_from_file)(UNKNOWN* a2_interface, UNKNOWN a3, UNKNOWN a4, UNKNOWN a5);
-	DACOM_DEFMETHOD(load_dds_info)(DDSInfo* out_info, DWORD membytesize, void* mapped_file_mem);
-	DACOM_DEFMETHOD(load_cubemap)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture);
+	DEFMETHOD(print_screen)(IFileSystem* IFS, const char* child);
+	DEFMETHOD(load_texture)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture);
+	DEFMETHOD(load_surface_from_file)(UNKNOWN* a2_interface, UNKNOWN a3, UNKNOWN a4, UNKNOWN a5);
+	DEFMETHOD(load_dds_info)(DDSInfo* out_info, DWORD membytesize, void* mapped_file_mem);
+	DEFMETHOD(load_cubemap)(IFileSystem* IFS, const char* child, IRP_TEXTUREHANDLE* out_htexture);
 };
 
 #endif

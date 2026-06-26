@@ -37,17 +37,17 @@ struct DACOM_NO_VTABLE IProfileParser : public IDAComponent
 		PP_TRUNCATEEXISTING = 5
 	};
 
-	DACOM_DEFMETHOD(Initialize) (const C8* fileName, ACCESS access = READ_ACCESS) = 0;
+	DEFMETHOD(Initialize) (const C8* fileName, ACCESS access = READ_ACCESS) = 0;
 
-	DACOM_DEFMETHOD_(BOOL32, EnumerateSections) (ENUM_PROC proc = 0, void* context = 0) = 0;
+	DEFMETHOD_(BOOL32, EnumerateSections) (ENUM_PROC proc = 0, void* context = 0) = 0;
 
-	DACOM_DEFMETHOD_(HANDLE, CreateSection) (const C8* sectionName, CREATE_MODE mode = PP_OPENEXISTING) = 0;
+	DEFMETHOD_(HANDLE, CreateSection) (const C8* sectionName, CREATE_MODE mode = PP_OPENEXISTING) = 0;
 
-	DACOM_DEFMETHOD_(BOOL32, CloseSection) (HANDLE hSection) = 0;
+	DEFMETHOD_(BOOL32, CloseSection) (HANDLE hSection) = 0;
 
-	DACOM_DEFMETHOD_(U32, ReadProfileLine) (HANDLE hSection, U32 lineNumber, C8* buffer, U32 bufferSize) = 0;
+	DEFMETHOD_(U32, ReadProfileLine) (HANDLE hSection, U32 lineNumber, C8* buffer, U32 bufferSize) = 0;
 
-	DACOM_DEFMETHOD_(U32, ReadKeyValue) (HANDLE hSection, const C8* keyName, C8* buffer, U32 bufferSize) = 0;
+	DEFMETHOD_(U32, ReadKeyValue) (HANDLE hSection, const C8* keyName, C8* buffer, U32 bufferSize) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -71,12 +71,12 @@ struct DACOM_NO_VTABLE IProfileCallback
 
 struct DACOM_NO_VTABLE IProfileParser2 : public IDAComponent
 {
-	DACOM_DEFMETHOD(Initialize) (const C8* fileName, IProfileParser::ACCESS access = IProfileParser::READ_ACCESS) = 0;
-	DACOM_DEFMETHOD(Initialize2) (const C8* buffer, U32 bufferSize) = 0;
-	DACOM_DEFMETHOD_(HANDLE, CreateSection) (const C8* sectionName, IProfileParser::CREATE_MODE mode = IProfileParser::PP_OPENEXISTING) = 0;
-	DACOM_DEFMETHOD_(BOOL32, CloseSection) (HANDLE hSection) = 0;
-	DACOM_DEFMETHOD_(U32, ReadProfileLine) (HANDLE hSection, U32 lineNumber, C8* buffer, U32 bufferSize) = 0;
-	DACOM_DEFMETHOD_(U32, ReadKeyValue) (HANDLE hSection, const C8* keyName, C8* buffer, U32 bufferSize) = 0;
-	DACOM_DEFMETHOD_(BOOL32, EnumerateSections) (IProfileCallback* callback, void* context = 0) = 0;
-	DACOM_DEFMETHOD_(BOOL32, EnumerateKeys) (IProfileCallback* callback, HANDLE hSection, void* context = 0) = 0;
+	DEFMETHOD(Initialize) (const C8* fileName, IProfileParser::ACCESS access = IProfileParser::READ_ACCESS) = 0;
+	DEFMETHOD(Initialize2) (const C8* buffer, U32 bufferSize) = 0;
+	DEFMETHOD_(HANDLE, CreateSection) (const C8* sectionName, IProfileParser::CREATE_MODE mode = IProfileParser::PP_OPENEXISTING) = 0;
+	DEFMETHOD_(BOOL32, CloseSection) (HANDLE hSection) = 0;
+	DEFMETHOD_(U32, ReadProfileLine) (HANDLE hSection, U32 lineNumber, C8* buffer, U32 bufferSize) = 0;
+	DEFMETHOD_(U32, ReadKeyValue) (HANDLE hSection, const C8* keyName, C8* buffer, U32 bufferSize) = 0;
+	DEFMETHOD_(BOOL32, EnumerateSections) (IProfileCallback* callback, void* context = 0) = 0;
+	DEFMETHOD_(BOOL32, EnumerateKeys) (IProfileCallback* callback, HANDLE hSection, void* context = 0) = 0;
 };

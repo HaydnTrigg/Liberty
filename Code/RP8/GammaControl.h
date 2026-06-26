@@ -54,7 +54,7 @@ struct DACOM_NO_VTABLE IGammaControl : public IDAComponent
 	// set_gamma_ramp, hence if you need more control than set_gamma_function allows, 
 	// use set-gamma_ramp.
 	//
-	DACOM_DEFMETHOD(set_gamma_function)(IGC_COMPONENT which, float display_gamma, float bias = 0.0, float slope = 1.0, float black_offset = 0.0) = 0;
+	DEFMETHOD(set_gamma_function)(IGC_COMPONENT which, float display_gamma, float bias = 0.0, float slope = 1.0, float black_offset = 0.0) = 0;
 
 	// set_gamma_ramp
 	//
@@ -74,7 +74,7 @@ struct DACOM_NO_VTABLE IGammaControl : public IDAComponent
 	// you are only using 8bit values, they should go in the HIGH byte of the
 	// 16bit value.
 	//
-	DACOM_DEFMETHOD(set_gamma_ramp)(IGC_COMPONENT igc_component, U16* ramp) = 0;
+	DEFMETHOD(set_gamma_ramp)(IGC_COMPONENT igc_component, U16* ramp) = 0;
 
 	// get_gamma_ramp
 	//
@@ -83,19 +83,19 @@ struct DACOM_NO_VTABLE IGammaControl : public IDAComponent
 	// igc_component CAN NOT be IGC_ALL.
 	// out_ramp CAN NOT be NULL;
 	//
-	DACOM_DEFMETHOD(get_gamma_ramp)(IGC_COMPONENT igc_component, U16* out_ramp) = 0;
+	DEFMETHOD(get_gamma_ramp)(IGC_COMPONENT igc_component, U16* out_ramp) = 0;
 
 	// set_calibration_enable
 	//
 	// Returns GR_OK if device supports calibrated gamma ramps.
 	//
-	DACOM_DEFMETHOD(set_calibration_enable)(bool enabled) = 0;
+	DEFMETHOD(set_calibration_enable)(bool enabled) = 0;
 
 	// get_calibration_enable
 	//
 	// Returns GR_OK if device supports calibrated gamma ramps.
 	//
-	DACOM_DEFMETHOD(get_calibration_enable)(void) = 0;
+	DEFMETHOD(get_calibration_enable)(void) = 0;
 };
 
 #endif

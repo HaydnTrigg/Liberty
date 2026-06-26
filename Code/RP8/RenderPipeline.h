@@ -179,9 +179,9 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 {
 	// IDAComponent methods
 
-	DACOM_DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
-	DACOM_DEFMETHOD_(U32, AddRef)(void) = 0;
-	DACOM_DEFMETHOD_(U32, Release)(void) = 0;
+	DEFMETHOD(QueryInterface)(const C8* interface_name, void** instance) = 0;
+	DEFMETHOD_(U32, AddRef)(void) = 0;
+	DEFMETHOD_(U32, Release)(void) = 0;
 
 	// IRenderPipeline8B methods
 
@@ -215,7 +215,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	//
 	// Calling startup() will shutdown any previously "started" device.
 	// 
-	DACOM_DEFMETHOD(startup)(const char* profile_name);
+	DEFMETHOD(startup)(const char* profile_name);
 
 	// shutdown
 	//
@@ -229,26 +229,26 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// strictly necessary to call shutdown() unless you want to explicitly
 	// shutdown the current device (i.e. to clear all of the device data out).
 	//
-	DACOM_DEFMETHOD(shutdown)(void);
+	DEFMETHOD(shutdown)(void);
 
 	// set_pipeline_state
 	//
 	// Set the current value of a piece of pipeline state. 
 	//
-	DACOM_DEFMETHOD(set_pipeline_state)(RPPIPELINESTATE state, U32 value) = 0;
+	DEFMETHOD(set_pipeline_state)(RPPIPELINESTATE state, U32 value) = 0;
 
 	// get_pipeline_state
 	//
 	// Retrieve the current value of a piece of pipeline state.
 	//
-	DACOM_DEFMETHOD(get_pipeline_state)(RPPIPELINESTATE state, U32* value) = 0;
+	DEFMETHOD(get_pipeline_state)(RPPIPELINESTATE state, U32* value) = 0;
 
 	// get_device_info
 	// 
 	// Retrieves information about the device currently in use, if no
 	// device has been "started", this method returns an error.
 	//
-	DACOM_DEFMETHOD(get_device_info)(RPDEVICEINFO* info) = 0;
+	DEFMETHOD(get_device_info)(RPDEVICEINFO* info) = 0;
 
 	// query_device_ability
 	//
@@ -258,14 +258,14 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// out_answer points to the buffer to place the response into. The length
 	// of this buffer depends on the ability being queried.
 	//
-	DACOM_DEFMETHOD(query_device_ability)(RPDEVICEABILITY ability, U32* out_answer) = 0;
+	DEFMETHOD(query_device_ability)(RPDEVICEABILITY ability, U32* out_answer) = 0;
 
 	// get_num_display_modes
 	//
 	// Retrieve the number of display modes that the current device 
 	// supports.
 	//
-	DACOM_DEFMETHOD(get_num_display_modes)(U32* count) = 0;
+	DEFMETHOD(get_num_display_modes)(U32* count) = 0;
 
 	// get_display_mode
 	//
@@ -277,9 +277,9 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	//
 	// mode cannot be NULL
 	//
-	DACOM_DEFMETHOD(get_display_mode)(RPDISPLAYMODEINFO* mode, U32 mode_num) = 0;
+	DEFMETHOD(get_display_mode)(RPDISPLAYMODEINFO* mode, U32 mode_num) = 0;
 
-	DACOM_DEFMETHOD(select_mode)(RPBUFFERSINFO* mode, U32* adapter) = 0;
+	DEFMETHOD(select_mode)(RPBUFFERSINFO* mode, U32* adapter) = 0;
 
 	// create_buffers
 	//
@@ -297,9 +297,9 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// If this method returns failure, then there are no render buffers 
 	// available (even if a previous call to create_buffers() succeeded).
 	//
-	DACOM_DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) = 0;
+	DEFMETHOD(create_buffers)(HWND hwnd, RPBUFFERSINFO* requested, RPBUFFERSINFO* out_buffersinfo) = 0;
 
-	DACOM_DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) = 0;
+	DEFMETHOD(get_buffers)(U32* adapter, RPBUFFERSINFO* out_buffersinfo) = 0;
 
 	// destroy_buffers
 	// 
@@ -309,7 +309,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// always return failure) after a successful destroy_buffers call. Such 
 	// methods are noted in their description.
 	//
-	DACOM_DEFMETHOD(destroy_buffers)(void) = 0;
+	DEFMETHOD(destroy_buffers)(void) = 0;
 
 	// clear_buffers
 	//
@@ -325,7 +325,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(clear_buffers)(U32 rp_clear_flags, RECT* viewport_sub_rect) = 0;
+	DEFMETHOD(clear_buffers)(U32 rp_clear_flags, RECT* viewport_sub_rect) = 0;
 
 	// swap_buffers
 	//
@@ -336,7 +336,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(swap_buffers)(void) = 0;
+	DEFMETHOD(swap_buffers)(void) = 0;
 
 	// lock_buffer
 	//
@@ -345,7 +345,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(lock_buffer)(RPLOCKDATA* lockData) = 0;
+	DEFMETHOD(lock_buffer)(RPLOCKDATA* lockData) = 0;
 
 	// unlock_buffer
 	//
@@ -354,7 +354,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(unlock_buffer)(void) = 0;
+	DEFMETHOD(unlock_buffer)(void) = 0;
 
 	// get_buffer_interface
 	//
@@ -364,7 +364,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_buffer_interface)(const char* iid, void** out_iif) = 0;
+	DEFMETHOD(get_buffer_interface)(const char* iid, void** out_iif) = 0;
 
 	// get_device_stats
 	//
@@ -375,7 +375,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_device_stats)(RPDEVICESTATS* stat) = 0;
+	DEFMETHOD(get_device_stats)(RPDEVICESTATS* stat) = 0;
 
 	// set_viewport
 	//
@@ -384,7 +384,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_viewport)(int x, int y, int w, int h) = 0;
+	DEFMETHOD(set_viewport)(int x, int y, int w, int h) = 0;
 
 	// get_viewport
 	//
@@ -393,7 +393,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_viewport)(int* out_x, int* out_y, int* out_w, int* out_h) = 0;
+	DEFMETHOD(get_viewport)(int* out_x, int* out_y, int* out_w, int* out_h) = 0;
 
 	// set_depth_range
 	//
@@ -408,7 +408,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_depth_range)(float lower_z_bound, float upper_z_bound) = 0;
+	DEFMETHOD(set_depth_range)(float lower_z_bound, float upper_z_bound) = 0;
 
 	// get_depth_range
 	//
@@ -418,7 +418,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_depth_range)(float* lower_z_bound, float* upper_z_bound) = 0;
+	DEFMETHOD(get_depth_range)(float* lower_z_bound, float* upper_z_bound) = 0;
 
 	// set_window
 	//
@@ -427,7 +427,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_window)(HWND wnd, int x, int y, int w, int h) = 0;
+	DEFMETHOD(set_window)(HWND wnd, int x, int y, int w, int h) = 0;
 
 	// get_window
 	//
@@ -436,12 +436,12 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_window)(HWND* out_wnd, int* out_x, int* out_y, int* out_w, int* out_h) = 0;
+	DEFMETHOD(get_window)(HWND* out_wnd, int* out_x, int* out_y, int* out_w, int* out_h) = 0;
 
-	DACOM_DEFMETHOD(set_world)(const Transform& world) = 0;
-	DACOM_DEFMETHOD(get_world)(Transform& world) = 0;
-	DACOM_DEFMETHOD(set_view)(const Transform& view) = 0;
-	DACOM_DEFMETHOD(get_view)(Transform& view) = 0;
+	DEFMETHOD(set_world)(const Transform& world) = 0;
+	DEFMETHOD(get_world)(Transform& world) = 0;
+	DEFMETHOD(set_view)(const Transform& view) = 0;
+	DEFMETHOD(get_view)(Transform& view) = 0;
 
 	// set_modelview
 	//
@@ -450,7 +450,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_modelview)(const Transform& modelview) = 0;
+	DEFMETHOD(set_modelview)(const Transform& modelview) = 0;
 
 	// get_modelview
 	//
@@ -459,7 +459,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_modelview)(Transform& modelview) = 0;
+	DEFMETHOD(get_modelview)(Transform& modelview) = 0;
 
 	// set_projection
 	//
@@ -468,7 +468,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_projection)(const Matrix4& projection) = 0;
+	DEFMETHOD(set_projection)(const Matrix4& projection) = 0;
 
 	// get_projection
 	//
@@ -477,7 +477,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_projection)(Matrix4& projection) = 0;
+	DEFMETHOD(get_projection)(Matrix4& projection) = 0;
 
 	// set_lookat
 	//
@@ -491,7 +491,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_lookat)(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz) = 0;
+	DEFMETHOD(set_lookat)(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz) = 0;
 
 	// set_ortho
 	//
@@ -503,7 +503,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_ortho)(float left, float right, float bottom, float top, float nearval, float farval) = 0;
+	DEFMETHOD(set_ortho)(float left, float right, float bottom, float top, float nearval, float farval) = 0;
 
 	// set_perspective
 	//
@@ -514,7 +514,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_perspective)(float fovy, float aspect, float znear, float zfar) = 0;
+	DEFMETHOD(set_perspective)(float fovy, float aspect, float znear, float zfar) = 0;
 
 	// set_light
 	//
@@ -527,9 +527,9 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_light)(IRP_LIGHTHANDLE handle, const D3DLIGHT8* light_values) = 0;
+	DEFMETHOD(set_light)(IRP_LIGHTHANDLE handle, const D3DLIGHT8* light_values) = 0;
 
-	DACOM_DEFMETHOD(destroy_light)(IRP_LIGHTHANDLE handle) = 0;
+	DEFMETHOD(destroy_light)(IRP_LIGHTHANDLE handle) = 0;
 
 	// get_light
 	//
@@ -538,7 +538,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_light)(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values) = 0;
+	DEFMETHOD(get_light)(IRP_LIGHTHANDLE handle, D3DLIGHT8* out_light_values) = 0;
 
 	// set_light_enable
 	//
@@ -547,7 +547,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_light_enable)(IRP_LIGHTHANDLE handle, U32 enable) = 0;
+	DEFMETHOD(set_light_enable)(IRP_LIGHTHANDLE handle, U32 enable) = 0;
 
 	// get_light_enable 
 	//
@@ -556,7 +556,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_light_enable)(IRP_LIGHTHANDLE handle, U32* out_enable) = 0;
+	DEFMETHOD(get_light_enable)(IRP_LIGHTHANDLE handle, U32* out_enable) = 0;
 
 	// set_material
 	//
@@ -565,7 +565,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_material)(D3DMATERIAL8* material_values) = 0;
+	DEFMETHOD(set_material)(D3DMATERIAL8* material_values) = 0;
 
 	// get_material
 	//
@@ -574,7 +574,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_material)(D3DMATERIAL8* out_material_values) = 0;
+	DEFMETHOD(get_material)(D3DMATERIAL8* out_material_values) = 0;
 
 	// create_texture
 	//
@@ -604,7 +604,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(create_texture)(int width, int height, const PFenum* desiredformat, int num_lod, U32 irp_ctf_flags, IRP_TEXTUREHANDLE* out_htexture) = 0;
+	DEFMETHOD(create_texture)(int width, int height, const PFenum* desiredformat, int num_lod, U32 irp_ctf_flags, IRP_TEXTUREHANDLE* out_htexture) = 0;
 
 	// destroy_texture
 	//
@@ -615,7 +615,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(destroy_texture)(IRP_TEXTUREHANDLE htexture) = 0;
+	DEFMETHOD(destroy_texture)(IRP_TEXTUREHANDLE htexture) = 0;
 
 	// is_texture
 	//
@@ -626,7 +626,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(is_texture)(IRP_TEXTUREHANDLE htexture) = 0;
+	DEFMETHOD(is_texture)(IRP_TEXTUREHANDLE htexture) = 0;
 
 	// lock_texture
 	//
@@ -636,7 +636,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(lock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface, RPLOCKDATA* lockData) = 0;
+	DEFMETHOD(lock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface, RPLOCKDATA* lockData) = 0;
 
 	// unlock_texture
 	//
@@ -645,7 +645,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(unlock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface) = 0;
+	DEFMETHOD(unlock_texture)(IRP_TEXTUREHANDLE htexture, U32 subsurface) = 0;
 
 	// get_texture_format
 	//
@@ -654,7 +654,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_texture_format)(IRP_TEXTUREHANDLE htexture, PFenum* out_pf) = 0;
+	DEFMETHOD(get_texture_format)(IRP_TEXTUREHANDLE htexture, PFenum* out_pf) = 0;
 
 	// get_texture_dim
 	//
@@ -663,7 +663,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_texture_dim)(IRP_TEXTUREHANDLE htexture, U32* out_width, U32* out_height, U32* out_num_lod) = 0;
+	DEFMETHOD(get_texture_dim)(IRP_TEXTUREHANDLE htexture, U32* out_width, U32* out_height, U32* out_num_lod) = 0;
 
 	// get_texture_interface
 	//
@@ -672,7 +672,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_texture_interface)(IRP_TEXTUREHANDLE htexture, const char* iid, void** out_iif) = 0;
+	DEFMETHOD(get_texture_interface)(IRP_TEXTUREHANDLE htexture, const char* iid, void** out_iif) = 0;
 
 	// set_texture_level_data
 	//
@@ -694,7 +694,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_texture_level_data)(IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette) = 0;
+	DEFMETHOD(set_texture_level_data)(IRP_TEXTUREHANDLE htexture, U32 subsurface, int src_width, int src_height, int src_stride, const PFenum* src_format, const void* src_pixel, const void* src_alpha, const RGB* src_palette) = 0;
 
 	// blit_texture
 	//
@@ -703,10 +703,10 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(blit_texture)(IRP_TEXTUREHANDLE hDest, U32 destLevel, RECT destRect, IRP_TEXTUREHANDLE hSrc, U32 srcLevel, RECT srcRect) = 0;
+	DEFMETHOD(blit_texture)(IRP_TEXTUREHANDLE hDest, U32 destLevel, RECT destRect, IRP_TEXTUREHANDLE hSrc, U32 srcLevel, RECT srcRect) = 0;
 
-	DACOM_DEFMETHOD(set_render_target)(UNKNOWN a2, UNKNOWN a3, UNKNOWN a4) = 0;
-	DACOM_DEFMETHOD(get_render_target)(void* a2) = 0;
+	DEFMETHOD(set_render_target)(UNKNOWN a2, UNKNOWN a3, UNKNOWN a4) = 0;
+	DEFMETHOD(get_render_target)(void* a2) = 0;
 
 	// begin_scene
 	//
@@ -716,7 +716,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(begin_scene)(void) = 0;
+	DEFMETHOD(begin_scene)(void) = 0;
 
 	// end_scene
 	//
@@ -726,9 +726,9 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(end_scene)(void) = 0;
+	DEFMETHOD(end_scene)(void) = 0;
 
-	DACOM_DEFMETHOD(reset_render_states_to_defaults)(void) = 0;
+	DEFMETHOD(reset_render_states_to_defaults)(void) = 0;
 
 	// set_render_state
 	//
@@ -737,7 +737,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_render_state)(D3DRENDERSTATETYPE state, U32 value) = 0;
+	DEFMETHOD(set_render_state)(D3DRENDERSTATETYPE state, U32 value) = 0;
 
 	// get_render_state
 	//
@@ -746,7 +746,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_render_state)(D3DRENDERSTATETYPE state, U32* value) = 0;
+	DEFMETHOD(get_render_state)(D3DRENDERSTATETYPE state, U32* value) = 0;
 
 	// set_texture_stage_state 
 	//
@@ -755,7 +755,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32 value) = 0;
+	DEFMETHOD(set_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32 value) = 0;
 
 	// get_texture_stage_state
 	//
@@ -764,7 +764,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32* value) = 0;
+	DEFMETHOD(get_texture_stage_state)(U32 stage, D3DTEXTURESTAGESTATETYPE state, U32* value) = 0;
 
 	// set_texture_stage_transform
 	//
@@ -773,7 +773,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_texture_stage_transform)(U32 stage, Matrix4 const& mat4) = 0;
+	DEFMETHOD(set_texture_stage_transform)(U32 stage, Matrix4 const& mat4) = 0;
 
 	// get_texture_stage_transform
 	//
@@ -782,7 +782,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_texture_stage_transform)(U32 stage, Matrix4& out_mat4) = 0;
+	DEFMETHOD(get_texture_stage_transform)(U32 stage, Matrix4& out_mat4) = 0;
 
 	// set_texture_stage_texture
 	//
@@ -792,7 +792,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(set_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE htexture) = 0;
+	DEFMETHOD(set_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE htexture) = 0;
 
 	// get_texture_stage_texture
 	//
@@ -801,7 +801,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(get_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE* out_htexture) = 0;
+	DEFMETHOD(get_texture_stage_texture)(U32 stage, IRP_TEXTUREHANDLE* out_htexture) = 0;
 
 	// verify_state
 	//
@@ -811,7 +811,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(verify_state)(void) = 0;
+	DEFMETHOD(verify_state)(void) = 0;
 
 	// draw_primitive
 	//
@@ -820,7 +820,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(draw_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, U32 flags) = 0;
+	DEFMETHOD(draw_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, U32 flags) = 0;
 
 	// draw_indexed_primitive
 	//
@@ -829,7 +829,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) = 0;
+	DEFMETHOD(draw_indexed_primitive)(D3DPRIMITIVETYPE type, U32 vertex_format, const void* verts, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) = 0;
 
 	// draw_primitive
 	//
@@ -838,7 +838,7 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(draw_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, U32 flags) = 0;
+	DEFMETHOD(draw_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, U32 flags) = 0;
 
 	// draw_indexed_primitive
 	//
@@ -847,12 +847,12 @@ struct DACOM_NO_VTABLE IRenderPipeline8B : public IDAComponent
 	// This method will always return failure 'outside' of successful create_buffers
 	// and destroy_buffers calls.
 	//
-	DACOM_DEFMETHOD(draw_indexed_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) = 0;
+	DEFMETHOD(draw_indexed_primitive_vb)(D3DPRIMITIVETYPE type, IRP_VERTEXBUFFERHANDLE vb_handle, U32 start_vert, U32 num_verts, const U16* indices, U32 num_indices, U32 flags) = 0;
 
-	DACOM_DEFMETHOD(add_light)(IRP_LIGHTHANDLE handle) = 0;
-	DACOM_DEFMETHOD(remove_light)(IRP_LIGHTHANDLE handle) = 0;
-	DACOM_DEFMETHOD(update_light)(IRP_LIGHTHANDLE handle) = 0;
-	DACOM_DEFMETHOD(set_world_n)(UNKNOWN a2, Transform* transform) = 0;
+	DEFMETHOD(add_light)(IRP_LIGHTHANDLE handle) = 0;
+	DEFMETHOD(remove_light)(IRP_LIGHTHANDLE handle) = 0;
+	DEFMETHOD(update_light)(IRP_LIGHTHANDLE handle) = 0;
+	DEFMETHOD(set_world_n)(UNKNOWN a2, Transform* transform) = 0;
 };
 
 extern "C"

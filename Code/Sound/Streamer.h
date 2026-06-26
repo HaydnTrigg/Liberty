@@ -80,7 +80,7 @@ struct DACOM_NO_VTABLE IStreamer : IDAComponent
 	 * Performs one-time initialization of the streamer: spins up the audio engine
 	 * and the background streaming thread. Returns TRUE on success.
 	 */
-	DACOM_DEFMETHOD_(BOOL32, Init) (STREAMERDESC* desc) = 0;
+	DEFMETHOD_(BOOL32, Init) (STREAMERDESC* desc) = 0;
 
 	/*
 	 * Opens 'filename' (a RIFF/WAVE file containing PCM or MP3 data) for
@@ -88,29 +88,29 @@ struct DACOM_NO_VTABLE IStreamer : IDAComponent
 	 * through; otherwise the default file system is used. Returns a stream handle,
 	 * or null on failure.
 	 */
-	DACOM_DEFMETHOD_(HSTREAM, Open) (const char* filename, struct IFileSystem* parent, DWORD flags = STRMFL_PLAY) = 0;
+	DEFMETHOD_(HSTREAM, Open) (const char* filename, struct IFileSystem* parent, DWORD flags = STRMFL_PLAY) = 0;
 
 	/*
 	 * Stops playback and releases all resources owned by the stream. The handle is
 	 * invalid once this returns.
 	 */
-	DACOM_DEFMETHOD_(BOOL32, CloseHandle) (HSTREAM hStream) = 0;
+	DEFMETHOD_(BOOL32, CloseHandle) (HSTREAM hStream) = 0;
 
 	// Stops playback of the stream without closing it.
-	DACOM_DEFMETHOD_(BOOL32, Stop) (HSTREAM hStream) = 0;
+	DEFMETHOD_(BOOL32, Stop) (HSTREAM hStream) = 0;
 
 	// Restarts playback of the stream from the beginning.
-	DACOM_DEFMETHOD_(BOOL32, Restart) (HSTREAM hStream) = 0;
+	DEFMETHOD_(BOOL32, Restart) (HSTREAM hStream) = 0;
 
 	/*
 	 * Sets/gets the stream volume, in hundredths of a decibel of attenuation
 	 * (DirectSound convention: 0 is full volume, -10000 is silence).
 	 */
-	DACOM_DEFMETHOD_(BOOL32, SetVolume) (HSTREAM hStream, S32 volume) = 0;
-	DACOM_DEFMETHOD_(BOOL32, GetVolume) (HSTREAM hStream, S32* volume) const = 0;
+	DEFMETHOD_(BOOL32, SetVolume) (HSTREAM hStream, S32 volume) = 0;
+	DEFMETHOD_(BOOL32, GetVolume) (HSTREAM hStream, S32* volume) const = 0;
 
 	// Returns the current playback status of the stream.
-	DACOM_DEFMETHOD_(STATUS, GetStatus) (HSTREAM hStream) const = 0;
+	DEFMETHOD_(STATUS, GetStatus) (HSTREAM hStream) const = 0;
 };
 
 /*
@@ -122,15 +122,15 @@ struct DACOM_NO_VTABLE IStreamer : IDAComponent
 struct DACOM_NO_VTABLE IStreamer2 : IStreamer
 {
 	// Legacy diagnostic accessors retained for ABI compatibility.
-	DACOM_DEFMETHOD_(DWORD, GetSomethingA) () = 0;
-	DACOM_DEFMETHOD_(DWORD, GetSomethingB) () = 0;
+	DEFMETHOD_(DWORD, GetSomethingA) () = 0;
+	DEFMETHOD_(DWORD, GetSomethingB) () = 0;
 
 	/*
 	 * Sets/gets the stream stereo pan, in hundredths of a decibel (DirectSound
 	 * convention: 0 is centered, -10000 is full left, 10000 is full right).
 	 */
-	DACOM_DEFMETHOD_(BOOL32, SetPan) (HSTREAM hStream, S32 pan) = 0;
-	DACOM_DEFMETHOD_(BOOL32, GetPan) (HSTREAM hStream, S32* pan) const = 0;
+	DEFMETHOD_(BOOL32, SetPan) (HSTREAM hStream, S32 pan) = 0;
+	DEFMETHOD_(BOOL32, GetPan) (HSTREAM hStream, S32* pan) const = 0;
 };
 
 #endif // __STREAMER_H__

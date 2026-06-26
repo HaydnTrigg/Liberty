@@ -43,25 +43,25 @@ struct DACOM_NO_VTABLE SoundStreamer : IStreamer2, IAggregateComponent
 
 	// *** IStreamer methods ***
 
-	DACOM_DEFMETHOD_(BOOL32, Init) (STREAMERDESC* desc) override;
-	DACOM_DEFMETHOD_(HSTREAM, Open) (const char* filename, IFileSystem* parent, DWORD flags = STRMFL_PLAY) override;
-	DACOM_DEFMETHOD_(BOOL32, CloseHandle) (HSTREAM hStream) override;
-	DACOM_DEFMETHOD_(BOOL32, Stop) (HSTREAM hStream) override;
-	DACOM_DEFMETHOD_(BOOL32, Restart) (HSTREAM hStream) override;
-	DACOM_DEFMETHOD_(BOOL32, SetVolume) (HSTREAM hStream, S32 volume) override;
-	DACOM_DEFMETHOD_(BOOL32, GetVolume) (HSTREAM hStream, S32* volume) const override;
-	DACOM_DEFMETHOD_(STATUS, GetStatus) (HSTREAM hStream) const override;
+	DEFMETHOD_(BOOL32, Init) (STREAMERDESC* desc) override;
+	DEFMETHOD_(HSTREAM, Open) (const char* filename, IFileSystem* parent, DWORD flags = STRMFL_PLAY) override;
+	DEFMETHOD_(BOOL32, CloseHandle) (HSTREAM hStream) override;
+	DEFMETHOD_(BOOL32, Stop) (HSTREAM hStream) override;
+	DEFMETHOD_(BOOL32, Restart) (HSTREAM hStream) override;
+	DEFMETHOD_(BOOL32, SetVolume) (HSTREAM hStream, S32 volume) override;
+	DEFMETHOD_(BOOL32, GetVolume) (HSTREAM hStream, S32* volume) const override;
+	DEFMETHOD_(STATUS, GetStatus) (HSTREAM hStream) const override;
 
 	// *** IStreamer2 methods ***
 
-	DACOM_DEFMETHOD_(DWORD, GetSomethingA) () override;
-	DACOM_DEFMETHOD_(DWORD, GetSomethingB) () override;
-	DACOM_DEFMETHOD_(BOOL32, SetPan) (HSTREAM hStream, S32 pan) override;
-	DACOM_DEFMETHOD_(BOOL32, GetPan) (HSTREAM hStream, S32* pan) const override;
+	DEFMETHOD_(DWORD, GetSomethingA) () override;
+	DEFMETHOD_(DWORD, GetSomethingB) () override;
+	DEFMETHOD_(BOOL32, SetPan) (HSTREAM hStream, S32 pan) override;
+	DEFMETHOD_(BOOL32, GetPan) (HSTREAM hStream, S32* pan) const override;
 
 	// *** IAggregateComponent methods ***
 
-	DACOM_DEFMETHOD(Initialize) (void) override;
+	DEFMETHOD(Initialize) (void) override;
 
 	/*
 	 * Called by the DACOM factory after construction. Establishes the singleton

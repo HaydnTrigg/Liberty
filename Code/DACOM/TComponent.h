@@ -69,9 +69,9 @@ template <class Base> struct DAComponent : public Base
 
 	/* IDAComponent methods */
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
-	DACOM_DEFMETHOD_(U32, AddRef)           (void);
-	DACOM_DEFMETHOD_(U32, Release)          (void);
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
+	DEFMETHOD_(U32, AddRef)           (void);
+	DEFMETHOD_(U32, Release)          (void);
 };
 
 //--------------------------------------------------------------------------//
@@ -138,7 +138,7 @@ U32 DAComponent< Base >::Release(void)
 template <class Base>
 struct DADebugComponent : public DAComponent<Base>
 {
-	DACOM_DEFMETHOD_(U32, AddRef)(void)
+	DEFMETHOD_(U32, AddRef)(void)
 	{
 		U32 ret = DAComponent<Base>::AddRef();
 
@@ -149,7 +149,7 @@ struct DADebugComponent : public DAComponent<Base>
 
 	//
 
-	DACOM_DEFMETHOD_(U32, Release)(void)
+	DEFMETHOD_(U32, Release)(void)
 	{
 		U32 ret = DAComponent<Base>::Release();
 
@@ -180,9 +180,9 @@ struct DACOM_NO_VTABLE DAComponentFactoryBase : public IComponentFactory
 
 	/* IDAComponent methods */
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
-	DACOM_DEFMETHOD_(U32, AddRef)           (void);
-	DACOM_DEFMETHOD_(U32, Release)          (void);
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
+	DEFMETHOD_(U32, AddRef)           (void);
+	DEFMETHOD_(U32, Release)          (void);
 };
 
 template <class ClassType, class DescType>
@@ -229,7 +229,7 @@ struct DAComponentFactory : public DAComponentFactoryBase<ClassType, DescType>
 
 	/* IComponentFactory methods */
 
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
 };
 //--------------------------------------------------------------------------//
 //
@@ -287,7 +287,7 @@ struct DAComponentFactory2 : public DAComponentFactoryBase<ClassType, DescType>
 
 	/* IComponentFactory methods */
 
-	DACOM_DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
+	DEFMETHOD(CreateInstance) (DACOMDESC* descriptor, void** instance);
 };
 
 template <class ClassType, class DescType>
@@ -353,9 +353,9 @@ struct DAComponentInner : public Base
 
 	/* IDAComponent methods */
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
-	DACOM_DEFMETHOD_(U32, AddRef)           (void);
-	DACOM_DEFMETHOD_(U32, Release)          (void);
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
+	DEFMETHOD_(U32, AddRef)           (void);
+	DEFMETHOD_(U32, Release)          (void);
 };
 
 template <class Type, class Base>
@@ -432,9 +432,9 @@ struct DAComponentAggregate : public Base
 
 	/* IDAComponent methods */
 
-	DACOM_DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
-	DACOM_DEFMETHOD_(U32, AddRef)           (void);
-	DACOM_DEFMETHOD_(U32, Release)          (void);
+	DEFMETHOD(QueryInterface) (const C8* interface_name, void** instance);
+	DEFMETHOD_(U32, AddRef)           (void);
+	DEFMETHOD_(U32, Release)          (void);
 };
 
 template <class Base>
@@ -466,7 +466,7 @@ struct DADebugComponentAggregate : public DAComponentAggregate<Base>
 
 	}
 
-	DACOM_DEFMETHOD_(U32, AddRef)(void)
+	DEFMETHOD_(U32, AddRef)(void)
 	{
 		U32 ret = DAComponentAggregate<Base>::AddRef();
 
@@ -477,7 +477,7 @@ struct DADebugComponentAggregate : public DAComponentAggregate<Base>
 
 	//
 
-	DACOM_DEFMETHOD_(U32, Release)(void)
+	DEFMETHOD_(U32, Release)(void)
 	{
 		U32 ret = DAComponentAggregate<Base>::Release();
 
